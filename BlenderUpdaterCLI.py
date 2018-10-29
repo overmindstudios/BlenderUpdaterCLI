@@ -207,7 +207,9 @@ else:
     spinnerCopy.stop()
     print('Copying ' + Fore.GREEN + 'done')
 
+    print("-".center(80, "-"))
     print(Fore.GREEN + "All tasks finished")
+
 
     if args.run:
         print(Fore.MAGENTA + "Starting up Blender...")
