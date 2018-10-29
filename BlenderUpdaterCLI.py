@@ -1,19 +1,19 @@
 '''
-Overmind Studios BlenderUpdaterCLI - update Blender to latest buildbot version
-Copyright (C) 2018 by Tobias Kummer for Overmind Studios
+    Overmind Studios BlenderUpdaterCLI - update Blender to latest buildbot version
+    Copyright (C) 2018 by Tobias Kummer for Overmind Studios
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
 import argparse
@@ -165,7 +165,6 @@ print("-".center(80, "-"))
 # Abort if any error occured during parsing
 if failed == True:
     print(Fore.RED + "Input errors detected, aborted (check above for details)")
-    quit()
 else:
     print(Fore.GREEN + "All settings valid, proceeding...")
     try:
@@ -178,7 +177,7 @@ else:
     if os.path.isdir('./blendertemp'):
         shutil.rmtree('./blendertemp')
     os.makedirs('./blendertemp')
-    #dir_ = os.path.join(args.path, '')
+    dir_ = os.path.join(args.path, '')
     print("Downloading " + filename[0])
     chunkSize = 10240
     r = requests.get(url + filename[0], stream=True)
