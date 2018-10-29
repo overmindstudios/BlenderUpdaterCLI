@@ -7,11 +7,12 @@ import tqdm
 init(autoreset=True)    # enable Colorama autoreset
 failed = False
 
-parser = argparse.ArgumentParser(description="Update Blender to latest nightly build.", epilog="example usage: BlenderUpdaterCLI -p C:\\Blender -b 28")
+parser = argparse.ArgumentParser(description="Update Blender to latest nightly build. (c) 2018 by Overmind Studios.", epilog="example usage: BlenderUpdaterCLI -p C:\\Blender -b 28")
 parser.add_argument('-p','--path', help="Destination path", required=True, type=str)
-parser.add_argument('-b', '--blender', help="Desired Blender version, either 279 or 28", required=True, type=str)
+parser.add_argument('-b', '--blender', help="Desired Blender version, either '-b 279' or '-b 28'", required=True, type=str)
 parser.add_argument('-a','--architecture', help="Architecture ('x86' or 'x64'). If omitted, it will autodetect current architecture.", required=False, type=str)
 parser.add_argument('-o','--operatingsystem', help="Operating system. 'osx', 'linux' or 'windows'. If omitted, it will autodetect current OS.", type=str)
+parser.add_argument('-r','--run', help="Run downloaded Blender version when finished", action="store_true")
 parser.add_argument('-v', '--version', action='version', version='0.1', help="Print program version")
 args = parser.parse_args()
 
@@ -37,43 +38,66 @@ else:
 
 # check for desired operating system or autodetect when empty
 if args.operatingsystem == "windows":
-    print("Operating system: " + Fore.GREEN + "Windows")
+    os = "Windows"
+    print("Operating system: " + Fore.GREEN + os)
 elif args.operatingsystem == "osx":
-    print("Operating system: " + Fore.GREEN + "OSX")
+    os = "OSX"
+    print("Operating system: " + Fore.GREEN + os)
 elif args.operatingsystem == "linux":
-    print("Operating system: " + Fore.GREEN + "Linux")
+    os = "Linux"
+    print("Operating system: " + Fore.GREEN + os)
 elif not args.operatingsystem:
     if platform.system() == "Windows":
-        print("Operating system: " + Fore.GREEN + "Windows " + Fore.CYAN + "(autodetected)")
+        os = "Windows"
+        print("Operating system: " + Fore.GREEN + os + Fore.CYAN + " (autodetected)")
     elif platform.system() == "Linux":
-        print("Operating system: " + Fore.GREEN + "Linux " + Fore.CYAN + "(autodetected)")
+        os = "Linux"
+        print("Operating system: " + Fore.GREEN + os + Fore.CYAN + " (autodetected)")
     elif platform.system() == "Darwin":
-        print("Operating system: " + Fore.GREEN + "OSX " + Fore.CYAN + "(autodetected)")
+        os = "OSX"
+        print("Operating system: " + Fore.GREEN + os + Fore.CYAN + " (autodetected)")
 else:
     print(Fore.RED + "Syntax error - please use '-o windows', '-o linux' or '-o osx'")
     failed = True
 
-
 # check for desired architecture or autodetect when empty
 if args.architecture == "x86":
-    if args.operatingsystem == "osx":
+    if os == "OSX":
         print(Fore.RED + "Error - no 32bit build for OSX")
         failed = True
     else:
-        print("Architecture: " + Fore.GREEN + "32bit")
+        arch = "32bit"
+        print("Architecture: " + Fore.GREEN + arch)
 elif args.architecture == "x64":
-    print("Architecture: " + Fore.GREEN + "64bit")
+    arch = "64bit"
+    print("Architecture: " + Fore.GREEN + arch)
 elif not args.architecture:
     if "32" in platform.machine():
-        print("Architecture: " + Fore.GREEN + "32bit " + Fore.CYAN + "(autodetected)")
+        if os == "OSX":
+            print(Fore.RED + "Error - no 32bit build for OSX")
+            failed = True
+        else:
+            arch = "32bit"
+            print("Architecture: " + Fore.GREEN + arch + Fore.CYAN + " (autodetected)")
     elif "64" in platform.machine():
-        print("Architecture: " + Fore.GREEN + "64bit " + Fore.CYAN + "(autodetected)")
+        arch = "64bit"
+        print("Architecture: " + Fore.GREEN + arch + Fore.CYAN + " (autodetected)")
 else:
     print(Fore.RED + "Syntax error - please use '-a x86' for 32bit or '-a x64' for 64bit")
     failed = True
 
+# check for --run flag
+if args.run:
+    print(Fore.MAGENTA + "Will run Blender when finished")
+    will_run = True
+else:
+    print(Fore.MAGENTA + "Will NOT run Blender when finished")
+    will_run = False
+
+
 print("-".center(80, "-"))
 
+# Abort if any error occured during parsing
 if failed == True:
     print(Fore.RED + "Input errors detected, aborted (check above for details)")
     quit()
