@@ -214,8 +214,7 @@ else:
     spinnerCleanup.stop()
     print('Cleanup ' + Fore.GREEN + 'done')
 
-
-
+    # Finished
     print("-".center(80, "-"))
     print(Fore.GREEN + "All tasks finished")
 
