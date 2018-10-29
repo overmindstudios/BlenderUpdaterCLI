@@ -208,7 +208,7 @@ else:
     print('Copying ' + Fore.GREEN + 'done')
 
     # Cleanup
-    spinnerCleanup = Spinner('Cleanup...')
+    spinnerCleanup = Spinner('Cleanup... ')
     spinnerCleanup.start()
     shutil.rmtree('./blendertemp')
     spinnerCleanup.stop()
