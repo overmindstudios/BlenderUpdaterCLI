@@ -210,7 +210,7 @@ else:
     print("-".center(80, "-"))
     print(Fore.GREEN + "All tasks finished")
 
-
+    # run Blender if -r flag present
     if args.run:
         print(Fore.MAGENTA + "Starting up Blender...")
         opsys = platform.system()
