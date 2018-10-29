@@ -10,6 +10,7 @@ import threading
 from distutils.dir_util import copy_tree # pylint: disable=no-name-in-module,import-error
 import sys
 import time
+import subprocess
 
 class Spinner:
     busy = False
@@ -189,3 +190,17 @@ else:
     print('Copying ' + Fore.GREEN + 'done')
 
     print(Fore.GREEN + "All tasks finished")
+
+    if args.run:
+        print(Fore.MAGENTA + "Starting up Blender...")
+        opsys = platform.system()
+        if opsys == 'Windows':
+            p = subprocess.Popen(os.path.join('"' + dir_ + "\\blender.exe" + '"'))
+        elif opsys == 'darwin':
+            BlenderOSXPath = os.path.join('"' + dir_ + "\\blender.app/Contents/MacOS/blender" + '"')
+            os.system("chmod +x " + BlenderOSXPath)
+            p = subprocess.Popen(BlenderOSXPath)
+        elif opsys == 'Linux':
+            p = subprocess.Popen(os.path.join(dir_ + '/blender'))
+        
+
