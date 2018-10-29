@@ -7,11 +7,13 @@
 where BLENDERVERSION is either ```279``` or ```28``` and PATH is an existing directory on your hard drive
 
 #### Additional flags:
-* -o OPERATINGSYSTEM (```windows```, ```linux``` or ```osx```) 
-* -a ARCHITECTURE (```x86``` for 32bit or ```x64``` for 64bit). 
+* ```-o``` OPERATINGSYSTEM (```windows```, ```linux``` or ```osx```) 
+* ```-a``` ARCHITECTURE (```x86``` for 32bit or ```x64``` for 64bit). 
 
 If those two flags above are omitted, the script autodetects the OS and architecture it's currently running on.
-* -r runs Blender after finishing
+* ```-r``` runs Blender after finishing
+* ```-h``` shows help text
+* ```-v``` shows version of the tool
 
 ### Verbose example:
 ```python BlenderUpdaterCLI.py -b 28 -p C:\Tools\Blender -o windows -a x64```
