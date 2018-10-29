@@ -1,13 +1,6 @@
-/__pycache__
-/.idea
-/.ropeproject
 /build
 /dist
 /blendertemp
 
-BlenderUpdater.log
-BlenderUpdater.spec
-build.bat
-config.ini
-oconsole.spec
+BlenderUpdaterCLI.spec
 .vscode/settings.json
