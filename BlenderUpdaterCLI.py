@@ -1,5 +1,5 @@
 '''
-    Overmind Studios BlenderUpdaterCLI - update Blender to latest nightly buils
+    Overmind Studios BlenderUpdaterCLI - update Blender to latest nightly builds
     Copyright (C) 2018 by Tobias Kummer for Overmind Studios
 
     This program is free software: you can redistribute it and/or modify
