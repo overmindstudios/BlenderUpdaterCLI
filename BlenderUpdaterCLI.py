@@ -207,6 +207,15 @@ else:
     spinnerCopy.stop()
     print('Copying ' + Fore.GREEN + 'done')
 
+    # Cleanup
+    spinnerCleanup = Spinner('Cleanup...')
+    spinnerCleanup.start()
+    shutil.rmtree('./blendertemp')
+    spinnerCleanup.stop()
+    print('Cleanup ' + Fore.GREEN + 'done')
+
+
+
     print("-".center(80, "-"))
     print(Fore.GREEN + "All tasks finished")
 

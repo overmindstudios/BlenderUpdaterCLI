@@ -1,6 +1,6 @@
 # BlenderUpdaterCLI
 ## Python 3 command line tool to update Blender to the latest buildbot version
-## Usage:
+## Usage
 ### Minimal example:
 ```python BlenderUpdaterCLI.py -b BLENDERVERSION -p PATH```
 
