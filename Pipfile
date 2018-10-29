@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 tqdm = "*"
 colorama = "*"
+requests = "*"
+progress = "*"
 
 [dev-packages]
 pylint = "*"
