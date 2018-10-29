@@ -173,7 +173,7 @@ else:
     except Exception:
         print(Fore.RED + "Error connecting to " + url + ", check your internet connection")
     
-    filename = re.findall('blender-' + blender + '-\w+-' + opsys + '[0-9a-zA-Z-._]*' + arch + '\.' + extension, req.text)
+    filename = re.findall(r'blender-' + blender + r'-\w+-' + opsys + r'[0-9a-zA-Z-._]*' + arch + r'\.' + extension, req.text)
 
     if os.path.isdir('./blendertemp'):
         shutil.rmtree('./blendertemp')
