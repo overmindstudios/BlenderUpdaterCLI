@@ -29,6 +29,7 @@ from distutils.dir_util import copy_tree # pylint: disable=no-name-in-module,imp
 import sys
 import time
 import subprocess
+import configparser
 
 class Spinner:
     busy = False
@@ -63,6 +64,7 @@ class Spinner:
 init(autoreset=True)    # enable Colorama autoreset
 failed = False
 url = 'https://builder.blender.org/download/'
+config = configparser.ConfigParser()
 
 parser = argparse.ArgumentParser(description="Update Blender to latest nightly build. (c) 2018 by Overmind Studios.", epilog="example usage: BlenderUpdaterCLI -p C:\\Blender -b 28")
 parser.add_argument('-p','--path', help="Destination path", required=True, type=str)
@@ -174,6 +176,27 @@ else:
     
     filename = re.findall(r'blender-' + blender + r'-\w+-' + opsys + r'[0-9a-zA-Z-._]*' + arch + r'\.' + extension, req.text)
 
+    if os.path.isfile('./config.ini'):
+        config.read('config.ini')
+        if '2.79' in str(filename[0]):
+            lastversion = config.get('main', 'version279')
+        elif '2.80' in str(filename[0]):
+            lastversion = config.get('main', 'version28')
+        if lastversion == filename[0]:
+            while True:
+                anyway = str(input('This version is already installed. Continue anyways? [Y]es or [N]o: ')).lower()
+                if anyway == 'n':
+                    sys.exit()
+                elif anyway == 'y':
+                    break
+                print("Invalid choice, try again!")
+            
+    else:
+        config.read('config.ini')
+        config.add_section('main')
+        with open('config.ini', 'w') as f:
+            config.write(f)
+
     if os.path.isdir('./blendertemp'):
         shutil.rmtree('./blendertemp')
     os.makedirs('./blendertemp')
@@ -216,6 +239,15 @@ else:
     # Finished
     print("-".center(80, "-"))
     print(Fore.GREEN + "All tasks finished")
+
+    # write configuration file
+    config.read('config.ini')
+    if '2.80' in str(filename[0]):
+        config.set('main', 'version28', filename[0])
+    elif '2.79' in str(filename[0]):
+        config.set('main', 'version279', filename[0])
+    with open('config.ini', 'w') as f:
+        config.write(f)
 
     # run Blender if -r flag present
     if args.run:
