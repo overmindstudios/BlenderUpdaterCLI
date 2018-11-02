@@ -12,6 +12,7 @@ where BLENDERVERSION is either ```279``` or ```28``` and PATH is an existing dir
 
 If those two flags above are omitted, the script autodetects the OS and architecture it's currently running on.
 * ```-r``` runs Blender after finishing
+* ```-y``` installs even when version on server matches locally installed version
 * ```-h``` shows help text
 * ```-v``` shows version of the tool
 

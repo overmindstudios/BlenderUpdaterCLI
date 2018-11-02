@@ -71,6 +71,7 @@ parser.add_argument('-p','--path', help="Destination path", required=True, type=
 parser.add_argument('-b','--blender', help="Desired Blender version, either '-b 279' or '-b 28'", required=True, type=str)
 parser.add_argument('-a','--architecture', help="Architecture ('x86' or 'x64'). If omitted, it will autodetect current architecture.", type=str)
 parser.add_argument('-o','--operatingsystem', help="Operating system. 'osx', 'linux' or 'windows'. If omitted, it will autodetect current OS.", type=str)
+parser.add_argument('-y', '--yes', help="Install even when version already installed", action="store_true")
 parser.add_argument('-r','--run', help="Run downloaded Blender version when finished", action="store_true")
 parser.add_argument('-v','--version', action='version', version='0.1', help="Print program version")
 args = parser.parse_args()
@@ -179,17 +180,26 @@ else:
     if os.path.isfile('./config.ini'):
         config.read('config.ini')
         if '2.79' in str(filename[0]):
-            lastversion = config.get('main', 'version279')
+            try:
+                lastversion = config.get('main', 'version279')
+            except Exception:
+                lastversion = ''
         elif '2.80' in str(filename[0]):
-            lastversion = config.get('main', 'version28')
+            try:
+                lastversion = config.get('main', 'version28')
+            except Exception:
+                lastversion = ''
         if lastversion == filename[0]:
             while True:
-                anyway = str(input('This version is already installed. Continue anyways? [Y]es or [N]o: ')).lower()
-                if anyway == 'n':
-                    sys.exit()
-                elif anyway == 'y':
+                if args.yes:
                     break
-                print("Invalid choice, try again!")
+                else:
+                    anyway = str(input('This version is already installed. Continue anyways? [Y]es or [N]o: ')).lower()
+                    if anyway == 'n':
+                        sys.exit()
+                    elif anyway == 'y':
+                        break
+                    print("Invalid choice, try again!")
             
     else:
         config.read('config.ini')
