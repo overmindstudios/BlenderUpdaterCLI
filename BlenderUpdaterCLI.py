@@ -182,7 +182,7 @@ else:
         if '2.79' in str(filename[0]):
             try:
                 lastversion = config.get('main', 'version279')
-            except Exception:
+            except Exception:   # TODO: Handle errors a bit more gracefully
                 lastversion = ''
         elif '2.80' in str(filename[0]):
             try:
