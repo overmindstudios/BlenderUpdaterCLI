@@ -4,13 +4,15 @@
 ### Minimal example:
 ```python BlenderUpdaterCLI.py -b BLENDERVERSION -p PATH```
 
-where BLENDERVERSION is either ```279``` or ```28``` and PATH is an existing directory on your hard drive
+where BLENDERVERSION is either ```279``` or ```28``` and PATH is an _existing_ directory on your hard drive
 
 #### Additional flags:
 * ```-o``` OPERATINGSYSTEM (```windows```, ```linux``` or ```osx```) 
 * ```-a``` ARCHITECTURE (```x86``` for 32bit or ```x64``` for 64bit). 
 
 If those two flags above are omitted, the script autodetects the OS and architecture it's currently running on.
+
+#### Optional flags:
 * ```-r``` runs Blender after finishing
 * ```-y``` installs even when version on server matches locally installed version
 * ```-h``` shows help text
