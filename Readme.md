@@ -14,7 +14,8 @@ If those two flags above are omitted, the script autodetects the OS and architec
 
 #### Optional flags:
 * ```-r``` runs Blender after finishing
-* ```-y``` installs even when version on server matches locally installed version
+* ```-y``` installs even when version on server matches last installed version
+* ```-n``` exits if last installed version matches version to be downloaded
 * ```-h``` shows help text
 * ```-v``` shows version of the tool
 
