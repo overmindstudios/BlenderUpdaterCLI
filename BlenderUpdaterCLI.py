@@ -74,7 +74,7 @@ parser.add_argument('-o','--operatingsystem', help="Operating system. 'osx', 'li
 parser.add_argument('-y', '--yes', help="Install even when version already installed", action="store_true")
 parser.add_argument('-n', '--no', help="Don't install when version already installed", action="store_true")
 parser.add_argument('-r','--run', help="Run downloaded Blender version when finished", action="store_true")
-parser.add_argument('-v','--version', action='version', version='0.1', help="Print program version")
+parser.add_argument('-v','--version', action='version', version='1.0', help="Print program version")
 args = parser.parse_args()
 
 print(" SETTINGS ".center(80, "-"))
