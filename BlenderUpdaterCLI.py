@@ -72,6 +72,7 @@ parser.add_argument('-b','--blender', help="Desired Blender version, either '-b 
 parser.add_argument('-a','--architecture', help="Architecture ('x86' or 'x64'). If omitted, it will autodetect current architecture.", type=str)
 parser.add_argument('-o','--operatingsystem', help="Operating system. 'osx', 'linux' or 'windows'. If omitted, it will autodetect current OS.", type=str)
 parser.add_argument('-y', '--yes', help="Install even when version already installed", action="store_true")
+parser.add_argument('-n', '--no', help="Don't install when version already installed", action="store_true")
 parser.add_argument('-r','--run', help="Run downloaded Blender version when finished", action="store_true")
 parser.add_argument('-v','--version', action='version', version='0.1', help="Print program version")
 args = parser.parse_args()
@@ -165,6 +166,10 @@ else:
 
 print("-".center(80, "-"))
 
+if args.yes and args.no:
+    print("You cannot pass both -y and -n flags at the same time!")
+    failed = True
+
 # Abort if any error occured during parsing
 if failed == True:
     print(Fore.RED + "Input errors detected, aborted (check above for details)")
@@ -193,6 +198,9 @@ else:
             while True:
                 if args.yes:
                     break
+                elif args.no:
+                    print("This version is already installed. -n flag present, exiting...")
+                    sys.exit()
                 else:
                     anyway = str(input('This version is already installed. Continue anyways? [Y]es or [N]o: ')).lower()
                     if anyway == 'n':
