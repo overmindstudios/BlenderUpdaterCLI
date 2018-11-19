@@ -16,21 +16,26 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 '''
 
-import argparse
 from colorama import init, Fore
-import platform
-import os
-import shutil
-import requests
-import re
-from progress.bar import IncrementalBar
-import threading
 from distutils.dir_util import copy_tree # pylint: disable=no-name-in-module,import-error
-import sys
-import time
-import subprocess
+from progress.bar import IncrementalBar
+import argparse
 import configparser
+import os
+import platform
+import re
+import requests
+import shutil
+import subprocess
+import sys
+import threading
+import time
 
+
+init(autoreset=True)    # enable Colorama autoreset
+failed = False
+url = 'https://builder.blender.org/download/'
+config = configparser.ConfigParser()
 class Spinner:
     busy = False
     delay = 0.1
@@ -61,20 +66,15 @@ class Spinner:
         self.busy = False
         time.sleep(self.delay)
 
-init(autoreset=True)    # enable Colorama autoreset
-failed = False
-url = 'https://builder.blender.org/download/'
-config = configparser.ConfigParser()
-
 parser = argparse.ArgumentParser(description="Update Blender to latest nightly build. (c) 2018 by Overmind Studios.", epilog="example usage: BlenderUpdaterCLI -p C:\\Blender -b 28")
-parser.add_argument('-p','--path', help="Destination path", required=True, type=str)
-parser.add_argument('-b','--blender', help="Desired Blender version, either '-b 279' or '-b 28'", required=True, type=str)
-parser.add_argument('-a','--architecture', help="Architecture ('x86' or 'x64'). If omitted, it will autodetect current architecture.", type=str)
-parser.add_argument('-o','--operatingsystem', help="Operating system. 'osx', 'linux' or 'windows'. If omitted, it will autodetect current OS.", type=str)
-parser.add_argument('-y','--yes', help="Install even when version already installed", action="store_true")
-parser.add_argument('-n','--no', help="Don't install when version already installed", action="store_true")
-parser.add_argument('-r','--run', help="Run downloaded Blender version when finished", action="store_true")
-parser.add_argument('-v','--version', action='version', version='1.0', help="Print program version")
+parser.add_argument('-p', '--path', help="Destination path", required=True, type=str)
+parser.add_argument('-b', '--blender', help="Desired Blender version, either '-b 279' or '-b 28'", required=True, type=str)
+parser.add_argument('-a', '--architecture', help="Architecture ('x86' or 'x64'). If omitted, it will autodetect current architecture.", type=str)
+parser.add_argument('-o', '--operatingsystem', help="Operating system. 'osx', 'linux' or 'windows'. If omitted, it will autodetect current OS.", type=str)
+parser.add_argument('-y', '--yes', help="Install even when version already installed", action="store_true")
+parser.add_argument('-n', '--no', help="Don't install when version already installed", action="store_true")
+parser.add_argument('-r', '--run', help="Run downloaded Blender version when finished", action="store_true")
+parser.add_argument('-v', '--version', action='version', version='1.0', help="Print program version")
 args = parser.parse_args()
 
 print(" SETTINGS ".center(80, "-"))
@@ -221,15 +221,19 @@ else:
     dir_ = os.path.join(args.path, '')
     print("Downloading " + filename[0])
     chunkSize = 10240
-    r = requests.get(url + filename[0], stream=True)
-    
-    with open("./blendertemp/" + filename[0], 'wb') as f:
-        pbar = IncrementalBar('Downloading', max=int(r.headers['Content-Length']) / chunkSize, suffix='%(percent)d%%')
-        for chunk in r.iter_content(chunk_size=chunkSize): 
-            if chunk: # filter out keep-alive new chunks
-                pbar.next()
-                f.write(chunk)
-        pbar.finish()
+    try:
+        r = requests.get(url + filename[0], stream=True)
+        
+        with open("./blendertemp/" + filename[0], 'wb') as f:
+            pbar = IncrementalBar('Downloading', max=int(r.headers['Content-Length']) / chunkSize, suffix='%(percent)d%%')
+            for chunk in r.iter_content(chunk_size=chunkSize): 
+                if chunk: # filter out keep-alive new chunks
+                    pbar.next()
+                    f.write(chunk)
+            pbar.finish()
+    except Exception:
+        print(Fore.RED + 'Download failed, please try again. Exiting.')
+        sys.exit()
     print('Download ' + Fore.GREEN + 'done')
 
     # Extraction
