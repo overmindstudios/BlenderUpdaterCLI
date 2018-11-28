@@ -5,3 +5,4 @@
 BlenderUpdaterCLI.spec
 .vscode
 config.ini
+*.bat

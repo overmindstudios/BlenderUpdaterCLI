@@ -199,7 +199,7 @@ else:
                 if args.yes:
                     break
                 elif args.no:
-                    print("This version is already installed. -n flag present, exiting...")
+                    print("This version is already installed. -n option present, exiting...")
                     sys.exit()
                 else:
                     anyway = str(input('This version is already installed. Continue anyways? [Y]es or [N]o: ')).lower()
@@ -223,7 +223,6 @@ else:
     chunkSize = 10240
     try:
         r = requests.get(url + filename[0], stream=True)
-        
         with open("./blendertemp/" + filename[0], 'wb') as f:
             pbar = IncrementalBar('Downloading', max=int(r.headers['Content-Length']) / chunkSize, suffix='%(percent)d%%')
             for chunk in r.iter_content(chunk_size=chunkSize): 
@@ -232,7 +231,7 @@ else:
                     f.write(chunk)
             pbar.finish()
     except Exception:
-        print(Fore.RED + 'Download failed, please try again. Exiting.')
+        print('Download' + Fore.RED + 'failed, please try again. Exiting.')
         sys.exit()
     print('Download ' + Fore.GREEN + 'done')
 
