@@ -238,7 +238,11 @@ else:
     # Extraction
     spinnerExtract = Spinner('Extracting... ')
     spinnerExtract.start()
-    shutil.unpack_archive("./blendertemp/" + filename[0], './blendertemp/')
+    try:
+        shutil.unpack_archive("./blendertemp/" + filename[0], './blendertemp/')
+    except Exception:
+        print(Fore.RED + 'Error during extraction, please try again. Exiting.')
+        sys.exit()
     spinnerExtract.stop()
     print('Extraction ' + Fore.GREEN + 'done')
 
