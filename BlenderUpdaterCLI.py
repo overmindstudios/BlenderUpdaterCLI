@@ -66,15 +66,15 @@ class Spinner:
         self.busy = False
         time.sleep(self.delay)
 
-parser = argparse.ArgumentParser(description="Update Blender to latest nightly build. (c) 2018 by Overmind Studios.", epilog="example usage: BlenderUpdaterCLI -p C:\\Blender -b 28")
+parser = argparse.ArgumentParser(description="Update Blender to latest nightly build. (c) 2018 by Tobias Kummer/Overmind Studios.", epilog="example usage: BlenderUpdaterCLI -p C:\\Blender -b 28")
 parser.add_argument('-p', '--path', help="Destination path", required=True, type=str)
 parser.add_argument('-b', '--blender', help="Desired Blender version, either '-b 279' or '-b 28'", required=True, type=str)
 parser.add_argument('-a', '--architecture', help="Architecture ('x86' or 'x64'). If omitted, it will autodetect current architecture.", type=str)
 parser.add_argument('-o', '--operatingsystem', help="Operating system. 'osx', 'linux' or 'windows'. If omitted, it will autodetect current OS.", type=str)
-parser.add_argument('-y', '--yes', help="Install even when version already installed", action="store_true")
-parser.add_argument('-n', '--no', help="Don't install when version already installed", action="store_true")
+parser.add_argument('-y', '--yes', help="Install even if version already installed", action="store_true")
+parser.add_argument('-n', '--no', help="Don't install if version already installed", action="store_true")
 parser.add_argument('-r', '--run', help="Run downloaded Blender version when finished", action="store_true")
-parser.add_argument('-v', '--version', action='version', version='1.0', help="Print program version")
+parser.add_argument('-v', '--version', action='version', version='1.1', help="Print program version")
 args = parser.parse_args()
 
 print(" SETTINGS ".center(80, "-"))
