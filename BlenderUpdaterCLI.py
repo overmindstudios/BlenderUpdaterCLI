@@ -73,6 +73,7 @@ parser.add_argument('-a', '--architecture', help="Architecture ('x86' or 'x64').
 parser.add_argument('-o', '--operatingsystem', help="Operating system. 'osx', 'linux' or 'windows'. If omitted, it will autodetect current OS.", type=str)
 parser.add_argument('-y', '--yes', help="Install even if version already installed", action="store_true")
 parser.add_argument('-n', '--no', help="Don't install if version already installed", action="store_true")
+parser.add_argument('-k', '--keep', help="Keep temporary downloaded archive file", action="store_true")
 parser.add_argument('-r', '--run', help="Run downloaded Blender version when finished", action="store_true")
 parser.add_argument('-v', '--version', action='version', version='1.1', help="Print program version")
 args = parser.parse_args()
@@ -156,6 +157,14 @@ else:
     print(Fore.RED + "Syntax error - please use '-a x86' for 32bit or '-a x64' for 64bit")
     failed = True
 
+#check for --keep flag
+if args.keep:
+    print(Fore.MAGENTA + "Will keep temporary archive file")
+    keep_temp = True
+else:
+    print(Fore.MAGENTA + "Will NOT keep temporary archive file")
+    keep_temp = False
+
 # check for --run flag
 if args.run:
     print(Fore.MAGENTA + "Will run Blender when finished")
@@ -215,9 +224,10 @@ else:
         with open('config.ini', 'w') as f:
             config.write(f)
 
-    if os.path.isdir('./blendertemp'):
-        shutil.rmtree('./blendertemp')
-    os.makedirs('./blendertemp')
+    if(not keep_temp):
+        if os.path.isdir('./blendertemp'):
+            shutil.rmtree('./blendertemp')
+    os.makedirs('./blendertemp', exist_ok=True)
     dir_ = os.path.join(args.path, '')
     print("Downloading " + filename[0])
     chunkSize = 10240
@@ -257,7 +267,12 @@ else:
     # Cleanup
     spinnerCleanup = Spinner('Cleanup... ')
     spinnerCleanup.start()
-    shutil.rmtree('./blendertemp')
+    if(keep_temp):
+        #just remove the extracted files
+        shutil.rmtree(os.path.join('./blendertemp/', source[0]))        
+    else:
+        shutil.rmtree('./blendertemp')
+
     spinnerCleanup.stop()
     print('Cleanup ' + Fore.GREEN + 'done')
 
