@@ -263,6 +263,10 @@ else:
     copy_tree(os.path.join('./blendertemp/', source[0]), dir_)
     spinnerCopy.stop()
     print('Copying ' + Fore.GREEN + 'done')
+    
+    if opsys == 'OSX':
+        BlenderOSXPath = os.path.join('"' + dir_ + "blender.app/Contents/MacOS/blender" + '"')
+        os.system("chmod +x " + BlenderOSXPath)
 
     # Cleanup
     spinnerCleanup = Spinner('Cleanup... ')
@@ -295,9 +299,7 @@ else:
         opsys = platform.system()
         if opsys == 'Windows':
             p = subprocess.Popen(os.path.join('"' + dir_ + "\\blender.exe" + '"'))
-        elif opsys == 'darwin':
-            BlenderOSXPath = os.path.join('"' + dir_ + "\\blender.app/Contents/MacOS/blender" + '"')
-            os.system("chmod +x " + BlenderOSXPath)
+        elif opsys == 'OSX':
             p = subprocess.Popen(BlenderOSXPath)
         elif opsys == 'Linux':
             p = subprocess.Popen(os.path.join(dir_ + '/blender'))
