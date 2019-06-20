@@ -17,7 +17,7 @@
 '''
 
 from colorama import init, Fore
-from distutils.dir_util import copy_tree # pylint: disable=no-name-in-module,import-error
+from distutils.dir_util import copy_tree  # pylint: disable=no-name-in-module,import-error
 from progress.bar import IncrementalBar
 import argparse
 import configparser
@@ -36,13 +36,15 @@ init(autoreset=True)    # enable Colorama autoreset
 failed = False
 url = 'https://builder.blender.org/download/'
 config = configparser.ConfigParser()
+
+
 class Spinner:
     busy = False
     delay = 0.1
 
     @staticmethod
     def spinning_cursor():
-        while 1: 
+        while 1:
             for cursor in '|/-\\': yield cursor
 
     def __init__(self, title, delay=None):
@@ -65,6 +67,7 @@ class Spinner:
     def stop(self):
         self.busy = False
         time.sleep(self.delay)
+
 
 parser = argparse.ArgumentParser(description="Update Blender to latest nightly build. (c) 2018-2019 by Tobias Kummer/Overmind Studios.", epilog="example usage: BlenderUpdaterCLI -p C:\\Blender -b 28")
 parser.add_argument('-p', '--path', help="Destination path", required=True, type=str)
@@ -157,7 +160,7 @@ else:
     print(Fore.RED + "Syntax error - please use '-a x86' for 32bit or '-a x64' for 64bit")
     failed = True
 
-#check for --keep flag
+# check for --keep flag
 if args.keep:
     print(Fore.MAGENTA + "Will keep temporary archive file")
     keep_temp = True
@@ -180,7 +183,7 @@ if args.yes and args.no:
     failed = True
 
 # Abort if any error occured during parsing
-if failed == True:
+if failed is True:
     print(Fore.RED + "Input errors detected, aborted (check above for details)")
 else:
     print(Fore.GREEN + "All settings valid, proceeding...")
@@ -188,7 +191,7 @@ else:
         req = requests.get(url)
     except Exception:
         print(Fore.RED + "Error connecting to " + url + ", check your internet connection")
-    
+
     filename = re.findall(r'blender-' + blender + r'-\w+-' + opsys + r'[0-9a-zA-Z-._]*' + arch + r'\.' + extension, req.text)
 
     if os.path.isfile('./config.ini'):
@@ -217,7 +220,7 @@ else:
                     elif anyway == 'y':
                         break
                     print("Invalid choice, try again!")
-            
+
     else:
         config.read('config.ini')
         config.add_section('main')
@@ -235,8 +238,8 @@ else:
         r = requests.get(url + filename[0], stream=True)
         with open("./blendertemp/" + filename[0], 'wb') as f:
             pbar = IncrementalBar('Downloading', max=int(r.headers['Content-Length']) / chunkSize, suffix='%(percent)d%%')
-            for chunk in r.iter_content(chunk_size=chunkSize): 
-                if chunk: # filter out keep-alive new chunks
+            for chunk in r.iter_content(chunk_size=chunkSize):
+                if chunk:  # filter out keep-alive new chunks
                     pbar.next()
                     f.write(chunk)
             pbar.finish()
@@ -273,8 +276,8 @@ else:
     spinnerCleanup = Spinner('Cleanup... ')
     spinnerCleanup.start()
     if(keep_temp):
-        #just remove the extracted files
-        shutil.rmtree(os.path.join('./blendertemp/', source[0]))        
+        # just remove the extracted files
+        shutil.rmtree(os.path.join('./blendertemp/', source[0]))
     else:
         shutil.rmtree('./blendertemp')
 
@@ -303,4 +306,3 @@ else:
             p = subprocess.Popen(BlenderOSXPath)
         elif opsys == 'Linux':
             p = subprocess.Popen(os.path.join(dir_ + '/blender'))
-        
