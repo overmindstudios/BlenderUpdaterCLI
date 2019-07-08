@@ -45,11 +45,13 @@ class Spinner:
     @staticmethod
     def spinning_cursor():
         while 1:
-            for cursor in '|/-\\': yield cursor
+            for cursor in '|/-\\':
+                yield cursor
 
     def __init__(self, title, delay=None):
         self.spinner_generator = self.spinning_cursor()
-        if delay and float(delay): self.delay = delay
+        if delay and float(delay):
+            self.delay = delay
         self.title = title
 
     def spinner_task(self):
