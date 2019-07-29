@@ -3,9 +3,7 @@
 [![Coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/tobkum)
 ## Usage
 ### Minimal example:
-```python BlenderUpdaterCLI.py -b BLENDERVERSION -p PATH```
-
-where BLENDERVERSION is either ```279``` or ```28``` and PATH is an _existing_ directory on your hard drive
+```python BlenderUpdaterCLI.py -p PATH```
 
 #### Additional flags:
 * ```-o``` OPERATINGSYSTEM (```windows```, ```linux``` or ```osx```) 
@@ -22,7 +20,7 @@ If those two flags above are omitted, the script autodetects the OS and architec
 * ```-v``` shows version of the tool
 
 ### Verbose example:
-```python BlenderUpdaterCLI.py -b 28 -p C:\Tools\Blender -o windows -a x64```
+```python BlenderUpdaterCLI.py -p C:\Tools\Blender -o windows -a x64```
 
 This will download the latest build of Blender 2.8 for 64bit Windows and copy it to C:\Tools\Blender
 

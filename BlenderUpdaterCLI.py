@@ -73,7 +73,6 @@ class Spinner:
 
 parser = argparse.ArgumentParser(description="Update Blender to latest nightly build. (c) 2018-2019 by Tobias Kummer/Overmind Studios.", epilog="example usage: BlenderUpdaterCLI -p C:\\Blender -b 28")
 parser.add_argument('-p', '--path', help="Destination path", required=True, type=str)
-parser.add_argument('-b', '--blender', help="Desired Blender version, either '-b 279' or '-b 28'", required=True, type=str)
 parser.add_argument('-a', '--architecture', help="Architecture ('x86' or 'x64'). If omitted, it will autodetect current architecture.", type=str)
 parser.add_argument('-o', '--operatingsystem', help="Operating system. 'osx', 'linux' or 'windows'. If omitted, it will try to autodetect current OS.", type=str)
 parser.add_argument('-y', '--yes', help="Install even if version already installed", action="store_true")
@@ -94,15 +93,8 @@ else:
     failed = True
 
 # check for desired blender version
-if args.blender == "28":
-    blender = "2.80"
-    print("Blender version: " + Fore.GREEN + "2.8")
-elif args.blender == "279":
-    blender = "2.79"
-    print("Blender version: " + Fore.GREEN + "2.79")
-else:
-    print(Fore.RED + "Syntax error - use '-b 279' for Blender 2.79 or '-b 28' for Blender 2.8")
-    failed = True
+blender = "2.81"
+print("Blender version: " + Fore.GREEN + "2.81")
 
 # check for desired operating system or autodetect when empty
 if args.operatingsystem == "windows":
@@ -198,12 +190,7 @@ else:
 
     if os.path.isfile('./config.ini'):
         config.read('config.ini')
-        if '2.79' in str(filename[0]):
-            try:
-                lastversion = config.get('main', 'version279')
-            except Exception:   # TODO: Handle errors a bit more gracefully
-                lastversion = ''
-        elif '2.80' in str(filename[0]):
+        if '2.81' in str(filename[0]):
             try:
                 lastversion = config.get('main', 'version28')
             except Exception:
