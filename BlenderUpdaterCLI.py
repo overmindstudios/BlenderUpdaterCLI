@@ -17,7 +17,7 @@
 '''
 
 from colorama import init, Fore
-from distutils.dir_util import copy_tree  # pylint: disable=no-name-in-module,import-error
+from distutils.dir_util import copy_tree
 from progress.bar import IncrementalBar
 import argparse
 import configparser
