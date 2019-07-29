@@ -71,7 +71,7 @@ class Spinner:
         time.sleep(self.delay)
 
 
-parser = argparse.ArgumentParser(description="Update Blender to latest nightly build. (c) 2018-2019 by Tobias Kummer/Overmind Studios.", epilog="example usage: BlenderUpdaterCLI -p C:\\Blender -b 28")
+parser = argparse.ArgumentParser(description="Update Blender to latest nightly build. (c) 2018-2019 by Tobias Kummer/Overmind Studios.", epilog="example usage: BlenderUpdaterCLI -p C:\\Blender")
 parser.add_argument('-p', '--path', help="Destination path", required=True, type=str)
 parser.add_argument('-a', '--architecture', help="Architecture ('x86' or 'x64'). If omitted, it will autodetect current architecture.", type=str)
 parser.add_argument('-o', '--operatingsystem', help="Operating system. 'osx', 'linux' or 'windows'. If omitted, it will try to autodetect current OS.", type=str)
@@ -279,10 +279,8 @@ else:
 
     # write configuration file
     config.read('config.ini')
-    if '2.80' in str(filename[0]):
+    if '2.81' in str(filename[0]):
         config.set('main', 'version28', filename[0])
-    elif '2.79' in str(filename[0]):
-        config.set('main', 'version279', filename[0])
     with open('config.ini', 'w') as f:
         config.write(f)
 
