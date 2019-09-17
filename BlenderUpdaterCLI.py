@@ -79,7 +79,7 @@ parser.add_argument('-y', '--yes', help="Install even if version already install
 parser.add_argument('-n', '--no', help="Don't install if version already installed", action="store_true")
 parser.add_argument('-k', '--keep', help="Keep temporary downloaded archive file", action="store_true")
 parser.add_argument('-r', '--run', help="Run downloaded Blender version when finished", action="store_true")
-parser.add_argument('-v', '--version', action='version', version='1.1', help="Print program version")
+parser.add_argument('-v', '--version', action='version', version='1.2', help="Print program version")
 args = parser.parse_args()
 
 print(" SETTINGS ".center(80, "-"))
