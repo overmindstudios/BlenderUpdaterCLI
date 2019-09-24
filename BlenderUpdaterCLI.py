@@ -361,4 +361,3 @@ else:
             p = subprocess.Popen(BlenderOSXPath)
         elif opsys == "Linux":
             p = subprocess.Popen(os.path.join(dir_ + "/blender"))
-
