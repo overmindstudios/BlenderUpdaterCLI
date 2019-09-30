@@ -6,3 +6,4 @@ BlenderUpdaterCLI.spec
 .vscode
 config.ini
 *.bat
+__pycache__/BlenderUpdaterCLI.cpython-37.pyc

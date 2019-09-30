@@ -10,8 +10,8 @@ progress = "*"
 
 [dev-packages]
 pyinstaller = "*"
-black = "*"
 flake8 = "*"
+black = "*"
 
 [requires]
 python_version = "3.7"

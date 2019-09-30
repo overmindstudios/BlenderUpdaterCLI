@@ -1,6 +1,8 @@
 # BlenderUpdaterCLI
 ## Python 3 command line tool to update Blender to the latest buildbot version
-[![Coffee](https://www.buymeacoffee.com/assets/img/custom_images/black_img.png)](https://www.buymeacoffee.com/tobkum)
+If you want to support me, feel free to donate on Ko-Fi!
+
+<a href="https://ko-fi.com/tobkum"><img src="https://az743702.vo.msecnd.net/cdn/kofi1.png?v=2" width="150"></a>
 ## Usage
 ### Minimal example:
 ```python BlenderUpdaterCLI.py -p PATH```
