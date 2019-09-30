@@ -109,6 +109,8 @@ elif args.operatingsystem == "linux":
     opsys = "linux"
     extension = "tar.bz2"
     print("Operating system: " + Fore.GREEN + "Linux")
+
+# autodetect OS
 elif not args.operatingsystem:
     if platform.system() == "Windows":
         opsys = "win"
