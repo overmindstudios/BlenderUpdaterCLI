@@ -104,11 +104,7 @@ parser.add_argument(
     action="store_true",
 )
 parser.add_argument(
-<<<<<<< HEAD
     "-v", "--version", action="version", version="1.2", help="Print program version"
-=======
-    "-v", "--version", action="version", version="1.2", help="Print program version"
->>>>>>> 42e3fb5d27b0aee91eed1adce7c9bc9d93721f75
 )
 args = parser.parse_args()
 
