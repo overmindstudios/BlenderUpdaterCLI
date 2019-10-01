@@ -113,57 +113,45 @@ print(" SETTINGS ".center(80, "-"))
 # check for path validity
 if os.path.isdir(args.path):
     dir_ = args.path
-    print("Destination path: " + Fore.GREEN + args.path)
+    print(f"Destination path: {Fore.GREEN}{args.path}")
 else:
     print(
         Fore.RED
-        + "'"
-        + args.path
-        + "'"
-        + " is an invalid path, make sure directory exists"
+        + f"'{args.path}' is an invalid path, make sure directory exists"
     )
     failed = True
 
 # check for desired blender version
 blender = "2.81"
-print("Blender version: " + Fore.GREEN + "2.81")
+print(f"Blender version: {Fore.GREEN}{blender}")
 
 # check for desired operating system or autodetect when empty
 if args.operatingsystem == "windows":
     opsys = "win"
     extension = "zip"
-    print("Operating system: " + Fore.GREEN + "Windows")
+    print(f"Operating system: {Fore.GREEN}{opsys}")
 elif args.operatingsystem == "osx":
     opsys = "OSX"
     extension = "zip"
-    print("Operating system: " + Fore.GREEN + "OSX")
+    print(f"Operating system: {Fore.GREEN}{opsys}")
 elif args.operatingsystem == "linux":
     opsys = "linux"
     extension = "tar.bz2"
-    print("Operating system: " + Fore.GREEN + "Linux")
+    print(f"Operating system: {Fore.GREEN}{opsys}")
 
 # autodetect OS
 elif not args.operatingsystem:
     if platform.system() == "Windows":
         opsys = "win"
         extension = "zip"
-        print(
-            "Operating system: "
-            + Fore.GREEN
-            + "Windows"
-            + Fore.CYAN
-            + " (autodetected)"
-        )
     elif platform.system() == "Linux":
         opsys = "linux"
         extension = "tar.bz2"
-        print(
-            "Operating system: " + Fore.GREEN + "Linux" + Fore.CYAN + " (autodetected)"
-        )
     elif platform.system() == "Darwin":
         opsys = "OSX"
         extension = "zip"
-        print("Operating system: " + Fore.GREEN + "OSX" + Fore.CYAN + " (autodetected)")
+    print(f"Operating system: {Fore.GREEN}{opsys}{Fore.CYAN} (autodetected)")
+
 else:
     print(Fore.RED + "Syntax error - use '-o windows', '-o linux' or '-o osx'")
     failed = True
@@ -177,10 +165,10 @@ if args.architecture == "x86":
         arch = "686"
     else:
         arch = "32"
-        print("Architecture: " + Fore.GREEN + "32bit")
+        print(f"Architecture: {Fore.GREEN}32bit")
 elif args.architecture == "x64":
     arch = "64"
-    print("Architecture: " + Fore.GREEN + "64bit")
+    print(f"Architecture: {Fore.GREEN}64bit")
 elif not args.architecture:
     if "32" in platform.machine():
         if opsys == "OSX":
@@ -189,11 +177,11 @@ elif not args.architecture:
         else:
             arch = "32"
             print(
-                "Architecture: " + Fore.GREEN + "32bit" + Fore.CYAN + " (autodetected)"
+                f"Architecture: {Fore.GREEN}32bit {Fore.CYAN}(autodetected)"
             )
     elif "64" in platform.machine():
         arch = "64"
-        print("Architecture: " + Fore.GREEN + "64bit" + Fore.CYAN + " (autodetected)")
+        print(f"Architecture: {Fore.GREEN}64bit {Fore.CYAN}(autodetected)")
 else:
     print(
         Fore.RED + "Syntax error - please use '-a x86' for 32bit or '-a x64' for 64bit"
@@ -231,7 +219,7 @@ else:
         req = requests.get(url)
     except Exception:
         print(
-            Fore.RED + "Error connecting to " + url + ", check your internet connection"
+            Fore.RED + f"Error connecting to {url}, check your internet connection"
         )
 
     filename = re.findall(
@@ -285,7 +273,7 @@ else:
             shutil.rmtree("./blendertemp")
     os.makedirs("./blendertemp", exist_ok=True)
     dir_ = os.path.join(args.path, "")
-    print("Downloading " + filename[0])
+    print(f"Downloading {filename[0]}")
     chunkSize = 10240
     try:
         r = requests.get(url + filename[0], stream=True)
