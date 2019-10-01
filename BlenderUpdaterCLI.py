@@ -282,9 +282,9 @@ else:
                     f.write(chunk)
             pbar.finish()
     except Exception:
-        print("Download" + Fore.RED + "failed, please try again. Exiting.")
+        print(f"Download {Fore.RED}failed, please try again. Exiting.")
         sys.exit()
-    print("Download " + Fore.GREEN + "done")
+    print(f"Download {Fore.GREEN}done")
 
     # Extraction
     spinnerExtract = Spinner("Extracting... ")
@@ -292,10 +292,10 @@ else:
     try:
         shutil.unpack_archive("./blendertemp/" + filename[0], "./blendertemp/")
     except Exception:
-        print("Extraction " + Fore.RED + "failed, please try again. Exiting.")
+        print(f"Extraction {Fore.RED}failed, please try again. Exiting.")
         sys.exit()
     spinnerExtract.stop()
-    print("Extraction " + Fore.GREEN + "done")
+    print(f"Extraction {Fore.GREEN}done")
 
     # Copying
     source = next(os.walk("./blendertemp/"))[1]
@@ -322,7 +322,7 @@ else:
         shutil.rmtree("./blendertemp")
 
     spinnerCleanup.stop()
-    print("Cleanup " + Fore.GREEN + "done")
+    print(f"Cleanup {Fore.GREEN}done")
 
     # Finished
     print("-".center(80, "-"))
