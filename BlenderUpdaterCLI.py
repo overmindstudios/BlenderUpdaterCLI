@@ -115,10 +115,7 @@ if os.path.isdir(args.path):
     dir_ = args.path
     print(f"Destination path: {Fore.GREEN}{args.path}")
 else:
-    print(
-        Fore.RED
-        + f"'{args.path}' is an invalid path, make sure directory exists"
-    )
+    print(Fore.RED + f"'{args.path}' is an invalid path, make sure directory exists")
     failed = True
 
 # check for desired blender version
@@ -176,9 +173,7 @@ elif not args.architecture:
             failed = True
         else:
             arch = "32"
-            print(
-                f"Architecture: {Fore.GREEN}32bit {Fore.CYAN}(autodetected)"
-            )
+            print(f"Architecture: {Fore.GREEN}32bit {Fore.CYAN}(autodetected)")
     elif "64" in platform.machine():
         arch = "64"
         print(f"Architecture: {Fore.GREEN}64bit {Fore.CYAN}(autodetected)")
@@ -218,9 +213,7 @@ else:
     try:
         req = requests.get(url)
     except Exception:
-        print(
-            Fore.RED + f"Error connecting to {url}, check your internet connection"
-        )
+        print(Fore.RED + f"Error connecting to {url}, check your internet connection")
 
     filename = re.findall(
         r"blender-"
