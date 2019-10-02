@@ -150,13 +150,13 @@ elif not args.operatingsystem:
     print(f"Operating system: {Fore.GREEN}{opsys}{Fore.CYAN} (autodetected)")
 
 else:
-    print(Fore.RED + "Syntax error - use '-o windows', '-o linux' or '-o osx'")
+    print(f"{Fore.RED}Syntax error - use '-o windows', '-o linux' or '-o osx'")
     failed = True
 
 # check for desired architecture or autodetect when empty
 if args.architecture == "x86":
     if opsys == "OSX":
-        print(Fore.RED + "Error - no 32bit build for OSX")
+        print(f"{Fore.RED}Error - no 32bit build for OSX")
         failed = True
     elif opsys == "linux":
         arch = "686"
@@ -169,7 +169,7 @@ elif args.architecture == "x64":
 elif not args.architecture:
     if "32" in platform.machine():
         if opsys == "OSX":
-            print(Fore.RED + "Error - no 32bit build for OSX")
+            print(f"{Fore.RED}Error - no 32bit build for OSX")
             failed = True
         else:
             arch = "32"
@@ -179,24 +179,24 @@ elif not args.architecture:
         print(f"Architecture: {Fore.GREEN}64bit {Fore.CYAN}(autodetected)")
 else:
     print(
-        Fore.RED + "Syntax error - please use '-a x86' for 32bit or '-a x64' for 64bit"
+        f"{Fore.RED}Syntax error - please use '-a x86' for 32bit or '-a x64' for 64bit"
     )
     failed = True
 
 # check for --keep flag
 if args.keep:
-    print(Fore.MAGENTA + "Will keep temporary archive file")
+    print(f"{Fore.MAGENTA}Will keep temporary archive file")
     keep_temp = True
 else:
-    print(Fore.MAGENTA + "Will NOT keep temporary archive file")
+    print(f"{Fore.MAGENTA}Will NOT keep temporary archive file")
     keep_temp = False
 
 # check for --run flag
 if args.run:
-    print(Fore.MAGENTA + "Will run Blender when finished")
+    print(f"{Fore.MAGENTA}Will run Blender when finished")
     will_run = True
 else:
-    print(Fore.MAGENTA + "Will NOT run Blender when finished")
+    print(f"{Fore.MAGENTA}Will NOT run Blender when finished")
     will_run = False
 
 print("-".center(80, "-"))
@@ -207,13 +207,13 @@ if args.yes and args.no:
 
 # Abort if any error occured during parsing
 if failed is True:
-    print(Fore.RED + "Input errors detected, aborted (check above for details)")
+    print(f"{Fore.RED}Input errors detected, aborted (check above for details)")
 else:
-    print(Fore.GREEN + "All settings valid, proceeding...")
+    print(f"{Fore.GREEN}All settings valid, proceeding...")
     try:
         req = requests.get(url)
     except Exception:
-        print(Fore.RED + f"Error connecting to {url}, check your internet connection")
+        print(f"{Fore.RED}Error connecting to {url}, check your internet connection")
 
     filename = re.findall(
         r"blender-"
@@ -303,7 +303,7 @@ else:
     spinnerCopy.start()
     copy_tree(os.path.join("./blendertemp/", source[0]), dir_)
     spinnerCopy.stop()
-    print("Copying " + Fore.GREEN + "done")
+    print(f"Copying {Fore.GREEN}done")
 
     opsys = platform.system()
     if opsys == "darwin":
@@ -326,7 +326,7 @@ else:
 
     # Finished
     print("-".center(80, "-"))
-    print(Fore.GREEN + "All tasks finished")
+    print(f"{Fore.GREEN}All tasks finished")
 
     # write configuration file
     config.read("config.ini")
@@ -337,7 +337,7 @@ else:
 
     # run Blender if -r flag present
     if args.run:
-        print(Fore.MAGENTA + "Starting up Blender...")
+        print(f"{Fore.MAGENTA}Starting up Blender...")
         if opsys == "Windows":
             p = subprocess.Popen(os.path.join('"' + dir_ + "\\blender.exe" + '"'))
         elif opsys == "darwin":
