@@ -310,7 +310,7 @@ else:
         BlenderOSXPath = os.path.join(
             '"' + dir_ + "\\blender.app/Contents/MacOS/blender" + '"'
         )
-        os.system("chmod +x " + BlenderOSXPath)
+        os.system(f"chmod +x {BlenderOSXPath}")
 
     # Cleanup
     spinnerCleanup = Spinner("Cleanup... ")
