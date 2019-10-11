@@ -7,3 +7,4 @@ BlenderUpdaterCLI.spec
 config.ini
 *.bat
 __pycache__/BlenderUpdaterCLI.cpython-37.pyc
+build.bat
