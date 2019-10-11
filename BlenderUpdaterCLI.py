@@ -104,7 +104,7 @@ parser.add_argument(
     action="store_true",
 )
 parser.add_argument(
-    "-v", "--version", action="version", version="1.2", help="Print program version"
+    "-v", "--version", action="version", version="1.3", help="Print program version"
 )
 args = parser.parse_args()
 
