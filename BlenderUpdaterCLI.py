@@ -321,7 +321,7 @@ else:
     config.read("config.ini")
     if "2.81" in str(filename[0]):
         config.set("main", "version281", filename[0])
-    elif "2.82" in str(filename[0]):        
+    elif "2.82" in str(filename[0]):
         config.set("main", "version282", filename[0])
     with open("config.ini", "w") as f:
         config.write(f)
