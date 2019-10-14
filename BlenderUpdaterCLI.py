@@ -215,12 +215,12 @@ else:
         config.read("config.ini")
         if "2.81" in str(filename[0]):
             try:
-                lastversion = config.get("main", "version281")
+                lastversion = config.get("main", "version28")
             except Exception:  # TODO: Handle errors a bit more gracefully
                 lastversion = ""
         elif "2.82" in str(filename[0]):
             try:
-                lastversion = config.get("main", "version282")
+                lastversion = config.get("main", "version28")
             except Exception:
                 lastversion = ""
         if lastversion == filename[0]:
@@ -319,8 +319,7 @@ else:
 
     # write configuration file
     config.read("config.ini")
-    if "2.81" in str(filename[0]):
-        config.set("main", "version28", filename[0])
+    config.set("main", "version28", filename[0])
     with open("config.ini", "w") as f:
         config.write(f)
 
