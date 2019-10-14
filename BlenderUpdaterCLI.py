@@ -98,6 +98,13 @@ parser.add_argument(
     "-k", "--keep", help="Keep temporary downloaded archive file", action="store_true"
 )
 parser.add_argument(
+    "-b",
+    "--blender",
+    help="Desired Blender version, either '-b 281' or '-b 282'",
+    required=True,
+    type=str,
+)
+parser.add_argument(
     "-r",
     "--run",
     help="Run downloaded Blender version when finished",
@@ -119,8 +126,18 @@ else:
     failed = True
 
 # check for desired blender version
-blender = "2.81"
-print(f"Blender version: {Fore.GREEN}{blender}")
+if args.blender == "281":
+    blender = "2.81"
+    print("Blender version: " + Fore.GREEN + "2.81")
+elif args.blender == "282":
+    blender = "2.82"
+    print("Blender version: " + Fore.GREEN + "2.82")
+else:
+    print(
+        Fore.RED
+        + "Syntax error - use '-b 281' for Blender 2.81 or '-b 282' for Blender 2.82"
+    )
+    failed = True
 
 # check for desired operating system or autodetect when empty
 if args.operatingsystem == "windows":
@@ -231,7 +248,12 @@ else:
         config.read("config.ini")
         if "2.81" in str(filename[0]):
             try:
-                lastversion = config.get("main", "version28")
+                lastversion = config.get("main", "version281")
+            except Exception:  # TODO: Handle errors a bit more gracefully
+                lastversion = ""
+        elif "2.82" in str(filename[0]):
+            try:
+                lastversion = config.get("main", "version282")
             except Exception:
                 lastversion = ""
         if lastversion == filename[0]:
