@@ -77,12 +77,6 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument("-p", "--path", help="Destination path", required=True, type=str)
 parser.add_argument(
-    "-a",
-    "--architecture",
-    help="Architecture ('x86' or 'x64'). If omitted, it will autodetect current architecture.",
-    type=str,
-)
-parser.add_argument(
     "-o",
     "--operatingsystem",
     help="Operating system. 'osx', 'linux' or 'windows'. If omitted, it will try to autodetect current OS.",
@@ -170,35 +164,8 @@ else:
     print(f"{Fore.RED}Syntax error - use '-o windows', '-o linux' or '-o osx'")
     failed = True
 
-# check for desired architecture or autodetect when empty
-if args.architecture == "x86":
-    if opsys == "OSX":
-        print(f"{Fore.RED}Error - no 32bit build for OSX")
-        failed = True
-    elif opsys == "linux":
-        arch = "686"
-    else:
-        arch = "32"
-        print(f"Architecture: {Fore.GREEN}32bit")
-elif args.architecture == "x64":
-    arch = "64"
-    print(f"Architecture: {Fore.GREEN}64bit")
-elif not args.architecture:
-    if "32" in platform.machine():
-        if opsys == "OSX":
-            print(f"{Fore.RED}Error - no 32bit build for OSX")
-            failed = True
-        else:
-            arch = "32"
-            print(f"Architecture: {Fore.GREEN}32bit {Fore.CYAN}(autodetected)")
-    elif "64" in platform.machine():
-        arch = "64"
-        print(f"Architecture: {Fore.GREEN}64bit {Fore.CYAN}(autodetected)")
-else:
-    print(
-        f"{Fore.RED}Syntax error - please use '-a x86' for 32bit or '-a x64' for 64bit"
-    )
-    failed = True
+# Only 64bit supported for all OS in experimental builds
+arch = "64"
 
 # check for --keep flag
 if args.keep:
