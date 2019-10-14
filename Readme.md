@@ -5,7 +5,11 @@ If you want to support me, feel free to donate on Ko-Fi!
 <a href="https://ko-fi.com/tobkum"><img src="https://az743702.vo.msecnd.net/cdn/kofi1.png?v=2" width="150"></a>
 ## Usage
 ### Minimal example:
-```python BlenderUpdaterCLI.py -p PATH```
+```python BlenderUpdaterCLI.py -b 281 -p PATH```
+
+#### Required flags:
+* ```-p``` PATH (add a valid path where you want the downloaded archive to be extracted to)
+* ```-b``` BLENDER (```281``` for Blender 2.81 or ```282``` for Blender 2.82)
 
 #### Additional flags:
 * ```-o``` OPERATINGSYSTEM (```windows```, ```linux``` or ```osx```) 
@@ -22,7 +26,7 @@ If those two flags above are omitted, the script autodetects the OS and architec
 * ```-v``` shows version of the tool
 
 ### Verbose example:
-```python BlenderUpdaterCLI.py -p C:\Tools\Blender -o windows -a x64```
+```python BlenderUpdaterCLI.py -p C:\Tools\Blender -b 281 -o windows -a x64```
 
 This will download the latest build of Blender 2.8 for 64bit Windows and copy it to C:\Tools\Blender
 
