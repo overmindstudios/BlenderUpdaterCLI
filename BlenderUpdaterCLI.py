@@ -19,6 +19,8 @@
 from colorama import init, Fore
 from distutils.dir_util import copy_tree
 from progress.bar import IncrementalBar
+from packaging import version
+import json
 import argparse
 import configparser
 import os
@@ -32,10 +34,14 @@ import threading
 import time
 
 
+appversion = "v1.5"
 init(autoreset=True)  # enable Colorama autoreset
 failed = False
 url = "https://builder.blender.org/download/"
 config = configparser.ConfigParser()
+updateurl = (
+    "https://api.github.com/repos/overmindstudios/BlenderUpdaterCLI/releases/latest"
+)
 
 
 class Spinner:
@@ -105,9 +111,39 @@ parser.add_argument(
     action="store_true",
 )
 parser.add_argument(
-    "-v", "--version", action="version", version="1.4", help="Print program version"
+    "-v",
+    "--version",
+    action="version",
+    version=appversion,
+    help="Print program version",
 )
 args = parser.parse_args()
+
+# Check for updates for BlenderUpdaterCLI
+
+try:
+    appupdate = requests.get(
+        "https://api.github.com/repos/overmindstudios/BlenderUpdaterCLI/releases/latest"
+    ).text
+    UpdateData = json.loads(appupdate)
+    applatestversion = UpdateData["tag_name"]
+    if version.parse(applatestversion) > version.parse(appversion):
+        print(" ERROR ".center(80, "-"))
+        print(f"{Fore.RED}Updated version of BlenderUpdaterCLI found.")
+        print(f"{Fore.RED}The current version might not work properly anymore.")
+        print(
+            f"{Fore.RED}Please visit https://github.com/overmindstudios/BlenderUpdaterCLI/releases"
+        )
+        print(f"{Fore.RED}to download the latest version.")
+        print(f"{Fore.RED}Current: {appversion} - Latest: {applatestversion}")
+        quit()
+except Exception:
+    print(" NOTICE ".center(80, "-"))
+    print("Cannot check for updates.")
+    raise Exception
+
+
+# Start process
 
 print(" SETTINGS ".center(80, "-"))
 

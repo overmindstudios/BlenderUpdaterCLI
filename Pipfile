@@ -7,6 +7,7 @@ name = "pypi"
 colorama = "*"
 requests = "*"
 progress = "*"
+packaging = "*"
 
 [dev-packages]
 pyinstaller = "*"
