@@ -119,8 +119,8 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-# Check for updates for BlenderUpdaterCLI
 
+# Check for updates for BlenderUpdaterCLI
 try:
     appupdate = requests.get(
         "https://api.github.com/repos/overmindstudios/BlenderUpdaterCLI/releases/latest"
@@ -143,7 +143,7 @@ except Exception:
     raise Exception
 
 
-# Start process
+# Start update process
 
 print(" SETTINGS ".center(80, "-"))
 
