@@ -100,7 +100,7 @@ parser.add_argument(
 parser.add_argument(
     "-b",
     "--blender",
-    help="Desired Blender version, either '-b 281' or '-b 282'",
+    help="Desired Blender version - for example '-b 2.82'",
     required=True,
     type=str,
 )
@@ -156,18 +156,7 @@ else:
     failed = True
 
 # check for desired blender version
-if args.blender == "281":
-    blender = "2.81"
-    print("Blender version: " + Fore.GREEN + "2.81")
-elif args.blender == "282":
-    blender = "2.82"
-    print("Blender version: " + Fore.GREEN + "2.82")
-else:
-    print(
-        Fore.RED
-        + "Syntax error - use '-b 281' for Blender 2.81 or '-b 282' for Blender 2.82"
-    )
-    failed = True
+blender = args.blender
 
 # check for desired operating system or autodetect when empty
 if args.operatingsystem == "windows":
@@ -229,56 +218,62 @@ if args.yes and args.no:
 if failed is True:
     print(f"{Fore.RED}Input errors detected, aborted (check above for details)")
 else:
-    print(f"{Fore.GREEN}All settings valid, proceeding...")
     try:
         req = requests.get(url)
     except Exception:
         print(f"{Fore.RED}Error connecting to {url}, check your internet connection")
 
-    filename = re.findall(
-        r"blender-"
-        + blender
-        + r"-\w+-"
-        + opsys
-        + r"[0-9a-zA-Z-._]*"
-        + arch
-        + r"\."
-        + extension,
-        req.text,
-    )
+    try:
+        filename = re.findall(
+            r"blender-"
+            + blender
+            + r"-\w+-"
+            + opsys
+            + r"[0-9a-zA-Z-._]*"
+            + arch
+            + r"\."
+            + extension,
+            req.text,
+        )
+    except Exception:
+        print(
+            f"{Fore.RED}No valid Blender version specified ({args.blender} not found)"
+        )
+        sys.exit()
 
     if os.path.isfile("./config.ini"):
-        config.read("config.ini")
-        if "2.81" in str(filename[0]):
-            try:
-                lastversion = config.get("main", "version281")
-            except Exception:  # TODO: Handle errors a bit more gracefully
-                lastversion = ""
-        elif "2.82" in str(filename[0]):
-            try:
-                lastversion = config.get("main", "version282")
-            except Exception:
-                lastversion = ""
-        if lastversion == filename[0]:
-            while True:
-                if args.yes:
-                    break
-                elif args.no:
-                    print(
-                        "This version is already installed. -n option present, exiting..."
-                    )
-                    sys.exit()
-                else:
-                    anyway = str(
-                        input(
-                            "This version is already installed. Continue anyways? [Y]es or [N]o: "
-                        )
-                    ).lower()
-                    if anyway == "n":
-                        sys.exit()
-                    elif anyway == "y":
+        config.read("./config.ini")
+        try:
+            lastversion = config.get("main", "version")
+        except Exception:  # TODO: Handle errors a bit more gracefully
+            lastversion = ""
+
+        try:
+            if lastversion == filename[0]:
+                while True:
+                    if args.yes:
                         break
-                    print("Invalid choice, try again!")
+                    elif args.no:
+                        print(
+                            "This version is already installed. -n option present, exiting..."
+                        )
+                        sys.exit()
+                    else:
+                        anyway = str(
+                            input(
+                                "This version is already installed. Continue anyways? [Y]es or [N]o: "
+                            )
+                        ).lower()
+                        if anyway == "n":
+                            sys.exit()
+                        elif anyway == "y":
+                            break
+                        print("Invalid choice, try again!")
+        except Exception:
+            print(
+                f"{Fore.RED}No valid Blender version specified ({args.blender} not found)"
+            )
+            sys.exit()
 
     else:
         config.read("config.ini")
@@ -291,6 +286,7 @@ else:
             shutil.rmtree("./blendertemp")
     os.makedirs("./blendertemp", exist_ok=True)
     dir_ = os.path.join(args.path, "")
+    print(f"{Fore.GREEN}All settings valid, proceeding...")
     print(f"Downloading {filename[0]}")
     chunkSize = 10240
     try:
@@ -355,10 +351,7 @@ else:
 
     # write configuration file
     config.read("config.ini")
-    if "2.81" in str(filename[0]):
-        config.set("main", "version281", filename[0])
-    elif "2.82" in str(filename[0]):
-        config.set("main", "version282", filename[0])
+    config.set("main", "version", filename[0])
     with open("config.ini", "w") as f:
         config.write(f)
 
