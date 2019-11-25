@@ -28,7 +28,7 @@ If those two flags above are omitted, the script autodetects the OS and architec
 ### Verbose example:
 ```python BlenderUpdaterCLI.py -p C:\Tools\Blender -b 2.82 -o windows -a x64```
 
-This will download the latest build of Blender 2.8 for 64bit Windows and copy it to C:\Tools\Blender
+This will download the latest build of Blender 2.82 for 64bit Windows and copy it to C:\Tools\Blender
 
 ## Screenshot
 ![Screenshot](https://raw.githubusercontent.com/overmindstudios/BlenderUpdaterCLI/master/screenshot.png)
