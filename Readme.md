@@ -5,7 +5,7 @@ If you want to support me, feel free to donate on Ko-Fi!
 <a href="https://ko-fi.com/tobkum"><img src="https://az743702.vo.msecnd.net/cdn/kofi1.png?v=2" width="150"></a>
 ## Usage
 ### Minimal example:
-```python BlenderUpdaterCLI.py -b 281 -p PATH```
+```python BlenderUpdaterCLI.py -b 2.82 -p PATH```
 
 #### Required flags:
 * ```-p``` PATH (add a valid path where you want the downloaded archive to be extracted to)
