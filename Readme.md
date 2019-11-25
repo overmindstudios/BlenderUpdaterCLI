@@ -9,7 +9,7 @@ If you want to support me, feel free to donate on Ko-Fi!
 
 #### Required flags:
 * ```-p``` PATH (add a valid path where you want the downloaded archive to be extracted to)
-* ```-b``` BLENDER (```281``` for Blender 2.81 or ```282``` for Blender 2.82)
+* ```-b``` BLENDER (Desired Blender version - for example ```-b 2.82```)
 
 #### Additional flags:
 * ```-o``` OPERATINGSYSTEM (```windows```, ```linux``` or ```osx```) 
