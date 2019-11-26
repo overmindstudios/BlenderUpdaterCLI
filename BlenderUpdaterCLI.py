@@ -79,7 +79,7 @@ class Spinner:
 
 parser = argparse.ArgumentParser(
     description="Update Blender to latest nightly build. (c) 2018-2019 by Tobias Kummer/Overmind Studios.",
-    epilog="example usage: BlenderUpdaterCLI -b 282 -p C:\\Blender",
+    epilog="example usage: BlenderUpdaterCLI -b 2.82 -p C:\\Blender",
 )
 parser.add_argument("-p", "--path", help="Destination path", required=True, type=str)
 parser.add_argument(
