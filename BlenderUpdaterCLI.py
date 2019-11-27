@@ -98,7 +98,9 @@ parser.add_argument(
 parser.add_argument(
     "-k", "--keep", help="Keep temporary downloaded archive file", action="store_true"
 )
-parser.add_argument("-t", "--temp", help="Temporary file path", required=False, type=str)
+parser.add_argument(
+    "-t", "--temp", help="Temporary file path", required=False, type=str
+)
 parser.add_argument(
     "-b",
     "--blender",
