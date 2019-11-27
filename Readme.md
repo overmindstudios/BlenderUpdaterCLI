@@ -21,7 +21,7 @@ If this flag is omitted, the script autodetects the OS it's currently running on
 * ```-y``` installs even when version on server matches last installed version
 * ```-n``` exits if last installed version matches version to be downloaded
 * ```-k``` keeps temporary archive download.
-* ```-t``` TEMP (Temporary file path. "./blendertemp" is the default. Unless -k specified it will be removed at end of installation)
+* ```-t``` TEMP (Temporary file path. "./blendertemp" is the default. Unless -k specified it will be removed at the end of installation)
 * ```-h``` shows help text
 * ```-v``` shows version of the tool
 
