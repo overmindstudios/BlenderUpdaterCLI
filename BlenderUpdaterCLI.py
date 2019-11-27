@@ -42,6 +42,7 @@ config = configparser.ConfigParser()
 updateurl = (
     "https://api.github.com/repos/overmindstudios/BlenderUpdaterCLI/releases/latest"
 )
+tempDir = "./blendertemp"
 
 
 class Spinner:
@@ -97,6 +98,7 @@ parser.add_argument(
 parser.add_argument(
     "-k", "--keep", help="Keep temporary downloaded archive file", action="store_true"
 )
+parser.add_argument("-t", "--temp", help="Temporary file path", required=False, type=str)
 parser.add_argument(
     "-b",
     "--blender",
@@ -154,6 +156,10 @@ if os.path.isdir(args.path):
 else:
     print(Fore.RED + f"'{args.path}' is an invalid path, make sure directory exists")
     failed = True
+
+if args.temp:
+    print(f"Temporary path: {Fore.GREEN}{args.temp}")
+    tempDir = args.temp
 
 # check for desired blender version
 blender = args.blender
@@ -282,16 +288,16 @@ else:
             config.write(f)
 
     if not keep_temp:
-        if os.path.isdir("./blendertemp"):
-            shutil.rmtree("./blendertemp")
-    os.makedirs("./blendertemp", exist_ok=True)
+        if os.path.isdir(tempDir):
+            shutil.rmtree(tempDir)
+    os.makedirs(tempDir, exist_ok=True)
     dir_ = os.path.join(args.path, "")
     print(f"{Fore.GREEN}All settings valid, proceeding...")
     print(f"Downloading {filename[0]}")
     chunkSize = 10240
     try:
         r = requests.get(url + filename[0], stream=True)
-        with open("./blendertemp/" + filename[0], "wb") as f:
+        with open(tempDir + filename[0], "wb") as f:
             pbar = IncrementalBar(
                 "Downloading",
                 max=int(r.headers["Content-Length"]) / chunkSize,
@@ -311,7 +317,7 @@ else:
     spinnerExtract = Spinner("Extracting... ")
     spinnerExtract.start()
     try:
-        shutil.unpack_archive("./blendertemp/" + filename[0], "./blendertemp/")
+        shutil.unpack_archive(tempDir + filename[0], tempDir)
     except Exception:
         print(f"Extraction {Fore.RED}failed, please try again. Exiting.")
         sys.exit()
@@ -319,10 +325,10 @@ else:
     print(f"Extraction {Fore.GREEN}done")
 
     # Copying
-    source = next(os.walk("./blendertemp/"))[1]
+    source = next(os.walk(tempDir))[1]
     spinnerCopy = Spinner("Copying... ")
     spinnerCopy.start()
-    copy_tree(os.path.join("./blendertemp/", source[0]), dir_)
+    copy_tree(os.path.join(tempDir, source[0]), dir_)
     spinnerCopy.stop()
     print(f"Copying {Fore.GREEN}done")
 
@@ -338,9 +344,9 @@ else:
     spinnerCleanup.start()
     if keep_temp:
         # just remove the extracted files
-        shutil.rmtree(os.path.join("./blendertemp/", source[0]))
+        shutil.rmtree(os.path.join(tempDir, source[0]))
     else:
-        shutil.rmtree("./blendertemp")
+        shutil.rmtree(tempDir)
 
     spinnerCleanup.stop()
     print(f"Cleanup {Fore.GREEN}done")

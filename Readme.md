@@ -21,7 +21,8 @@ If those two flags above are omitted, the script autodetects the OS and architec
 * ```-r``` runs Blender after finishing
 * ```-y``` installs even when version on server matches last installed version
 * ```-n``` exits if last installed version matches version to be downloaded
-* ```-k``` keeps temporary archive download. 
+* ```-k``` keeps temporary archive download.
+* ```-t``` TEMP (Temporary file path. "./blendertemp" is the default. Unless -k specified it will be removed at end of installation)
 * ```-h``` shows help text
 * ```-v``` shows version of the tool
 
