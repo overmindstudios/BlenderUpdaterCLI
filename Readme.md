@@ -13,7 +13,6 @@ If you want to support me, feel free to donate on Ko-Fi!
 
 #### Additional flags:
 * ```-o``` OPERATINGSYSTEM (```windows```, ```linux``` or ```osx```) 
-* ```-a``` ARCHITECTURE (```x86``` for 32bit or ```x64``` for 64bit). 
 
 If those two flags above are omitted, the script autodetects the OS and architecture it's currently running on.
 
