@@ -11,10 +11,10 @@ If you want to support me, feel free to donate on Ko-Fi!
 * ```-p``` PATH (add a valid path where you want the downloaded archive to be extracted to)
 * ```-b``` BLENDER (Desired Blender version - for example ```-b 2.82```)
 
-#### Additional flags:
+#### Additional flag:
 * ```-o``` OPERATINGSYSTEM (```windows```, ```linux``` or ```osx```) 
 
-If those two flags above are omitted, the script autodetects the OS and architecture it's currently running on.
+If this flag is omitted, the script autodetects the OS it's currently running on.
 
 #### Optional flags:
 * ```-r``` runs Blender after finishing
