@@ -42,7 +42,7 @@ config = configparser.ConfigParser()
 updateurl = (
     "https://api.github.com/repos/overmindstudios/BlenderUpdaterCLI/releases/latest"
 )
-tempDir = "./blendertemp"
+tempDir = "./blendertemp/"
 
 
 class Spinner:
