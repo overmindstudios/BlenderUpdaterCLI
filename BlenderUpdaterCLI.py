@@ -177,7 +177,7 @@ elif args.operatingsystem == "osx":
     print(f"Operating system: {Fore.GREEN}{opsys}")
 elif args.operatingsystem == "linux":
     opsys = "linux"
-    extension = "tar.bz2"
+    extension = "tar.xz"
     print(f"Operating system: {Fore.GREEN}{opsys}")
 
 # autodetect OS
@@ -187,7 +187,7 @@ elif not args.operatingsystem:
         extension = "zip"
     elif platform.system() == "Linux":
         opsys = "linux"
-        extension = "tar.bz2"
+        extension = "tar.xz"
     elif platform.system() == "Darwin":
         opsys = "OSX"
         extension = "zip"
