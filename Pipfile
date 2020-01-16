@@ -10,7 +10,7 @@ progress = "*"
 packaging = "*"
 
 [dev-packages]
-pyinstaller = "*"
+pyinstaller = ">=3.6"
 black = "*"
 flake8 = "*"
 
