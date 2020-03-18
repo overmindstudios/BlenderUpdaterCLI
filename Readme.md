@@ -1,5 +1,6 @@
 [![GPL3 License](https://img.shields.io/badge/license-GPL3-blue.svg)](https://github.com/overmindstudios/BlenderUpdater/blob/master/LICENSE) 
 ![Downloads](https://img.shields.io/github/downloads/overmindstudios/BlenderUpdaterCLI/total)
+[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/G2G5149IX)
 
 # BlenderUpdaterCLI
 ## Python 3 command line tool to update Blender to the latest buildbot version
