@@ -30,7 +30,7 @@ If this flag is omitted, the script autodetects the OS it's currently running on
 * ```-v``` shows version of the tool
 
 ### Verbose example:
-```python BlenderUpdaterCLI.py -p C:\Tools\Blender -b 2.82 -o windows -a x64```
+```python BlenderUpdaterCLI.py -p C:\Tools\Blender -b 2.82 -o windows -n -r```
 
 This will download the latest build of Blender 2.82 for 64bit Windows and copy it to C:\Tools\Blender
 
