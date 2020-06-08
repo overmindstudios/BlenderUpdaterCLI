@@ -9,11 +9,11 @@ If you want to support me, feel free to donate on Ko-Fi!
 <a href="https://ko-fi.com/tobkum"><img src="https://az743702.vo.msecnd.net/cdn/kofi1.png?v=2" width="150"></a>
 ## Usage
 ### Minimal example:
-```python BlenderUpdaterCLI.py -b 2.82 -p PATH```
+```python BlenderUpdaterCLI.py -b 2.90.0 -p PATH```
 
 #### Required flags:
 * ```-p``` PATH (add a valid path where you want the downloaded archive to be extracted to)
-* ```-b``` BLENDER (Desired Blender version - for example ```-b 2.82```)
+* ```-b``` BLENDER (Desired Blender version - for example ```-b 2.90.0```)
 
 #### Additional flag:
 * ```-o``` OPERATINGSYSTEM (```windows```, ```linux``` or ```osx```) 
@@ -30,9 +30,9 @@ If this flag is omitted, the script autodetects the OS it's currently running on
 * ```-v``` shows version of the tool
 
 ### Verbose example:
-```python BlenderUpdaterCLI.py -p C:\Tools\Blender -b 2.82 -o windows -n -r```
+```python BlenderUpdaterCLI.py -p C:\Tools\Blender -b 2.90.0 -o windows -n -r```
 
-This will download the latest build of Blender 2.82 for 64bit Windows and copy it to C:\Tools\Blender
+This will download the latest build of Blender 2.90.0 for 64bit Windows and copy it to C:\Tools\Blender
 
 ## Screenshot
 ![Screenshot](https://raw.githubusercontent.com/overmindstudios/BlenderUpdaterCLI/master/screenshot.png)
