@@ -322,7 +322,7 @@ else:
         shutil.unpack_archive(tempDir + filename[0], tempDir)
     except Exception:
         print(f"Extraction {Fore.RED}failed, please try again. Exiting.")
-        sys.exit()
+        exit()
     spinnerExtract.stop()
     print(f"Extraction {Fore.GREEN}done")
 
