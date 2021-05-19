@@ -16,7 +16,7 @@ If you want to support me, feel free to donate on Ko-Fi!
 * ```-b``` BLENDER (Desired Blender version - for example ```-b 2.90.0```)
 
 #### Additional flag:
-* ```-o``` OPERATINGSYSTEM (```windows```, ```linux``` or ```osx```) 
+* ```-o``` OPERATINGSYSTEM (```windows``` or ```linux```) 
 
 If this flag is omitted, the script autodetects the OS it's currently running on.
 
