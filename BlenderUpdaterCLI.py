@@ -37,7 +37,7 @@ import time
 appversion = "v1.5"
 init(autoreset=True)  # enable Colorama autoreset
 failed = False
-url = "https://builder.blender.org/download/"
+url = "https://builder.blender.org/download/daily/"
 config = configparser.ConfigParser()
 updateurl = (
     "https://api.github.com/repos/overmindstudios/BlenderUpdaterCLI/releases/latest"
@@ -86,7 +86,7 @@ parser.add_argument("-p", "--path", help="Destination path", required=True, type
 parser.add_argument(
     "-o",
     "--operatingsystem",
-    help="Operating system. 'osx', 'linux' or 'windows'. If omitted, it will try to autodetect current OS.",
+    help="Operating system. 'linux' or 'windows'. If omitted, it will try to autodetect current OS.",
     type=str,
 )
 parser.add_argument(
@@ -168,11 +168,7 @@ blender = args.blender
 
 # check for desired operating system or autodetect when empty
 if args.operatingsystem == "windows":
-    opsys = "win"
-    extension = "zip"
-    print(f"Operating system: {Fore.GREEN}{opsys}")
-elif args.operatingsystem == "osx":
-    opsys = "OSX"
+    opsys = "windows"
     extension = "zip"
     print(f"Operating system: {Fore.GREEN}{opsys}")
 elif args.operatingsystem == "linux":
@@ -183,18 +179,15 @@ elif args.operatingsystem == "linux":
 # autodetect OS
 elif not args.operatingsystem:
     if platform.system() == "Windows":
-        opsys = "win"
+        opsys = "windows"
         extension = "zip"
     elif platform.system() == "Linux":
         opsys = "linux"
         extension = "tar.xz"
-    elif platform.system() == "Darwin":
-        opsys = "OSX"
-        extension = "zip"
     print(f"Operating system: {Fore.GREEN}{opsys}{Fore.CYAN} (autodetected)")
 
 else:
-    print(f"{Fore.RED}Syntax error - use '-o windows', '-o linux' or '-o osx'")
+    print(f"{Fore.RED}Syntax error - use '-o windows' or '-o linux'")
     failed = True
 
 # Only 64bit supported for all OS in experimental builds
@@ -233,15 +226,7 @@ else:
 
     try:
         filename = re.findall(
-            r"blender-"
-            + blender
-            + r"-\w+-"
-            + opsys
-            + r"[0-9a-zA-Z-._]*"
-            + arch
-            + r"\."
-            + extension,
-            req.text,
+            r"blender-" + blender + r".*?" + opsys + r".*?" + extension, req.text,
         )
     except Exception:
         print(
@@ -335,11 +320,6 @@ else:
     print(f"Copying {Fore.GREEN}done")
 
     opsys = platform.system()
-    if opsys == "darwin":
-        BlenderOSXPath = os.path.join(
-            '"' + dir_ + "\\blender.app/Contents/MacOS/blender" + '"'
-        )
-        os.system(f"chmod +x {BlenderOSXPath}")
 
     # Cleanup
     spinnerCleanup = Spinner("Cleanup... ")
@@ -368,7 +348,5 @@ else:
         print(f"{Fore.MAGENTA}Starting up Blender...")
         if opsys == "Windows":
             p = subprocess.Popen(os.path.join('"' + dir_ + "\\blender.exe" + '"'))
-        elif opsys == "darwin":
-            p = subprocess.Popen(BlenderOSXPath)
         elif opsys == "Linux":
             p = subprocess.Popen(os.path.join(dir_ + "/blender"))
