@@ -34,7 +34,7 @@ import threading
 import time
 
 
-appversion = "v1.6"
+appversion = "v1.7"
 init(autoreset=True)  # enable Colorama autoreset
 failed = False
 url = "https://builder.blender.org/download/daily/"
