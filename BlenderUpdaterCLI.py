@@ -218,6 +218,7 @@ if args.yes and args.no:
 # Abort if any error occured during parsing
 if failed is True:
     print(f"{Fore.RED}Input errors detected, aborted (check above for details)")
+    quit()
 else:
     try:
         req = requests.get(url)
@@ -226,7 +227,8 @@ else:
 
     try:
         filename = re.findall(
-            r"blender-" + blender + r".*?" + opsys + r".*?" + extension, req.text,
+            r"blender-" + blender + r"[^\s]+" + opsys + r"[^\s]+" + extension,
+            req.text,
         )
     except Exception:
         print(
