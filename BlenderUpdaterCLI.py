@@ -1,6 +1,6 @@
 """
     Overmind Studios BlenderUpdaterCLI - update Blender to latest buildbot version
-    Copyright (C) 2018-2021 by Tobias Kummer for Overmind Studios
+    Copyright (C) 2018-2022 by Tobias Kummer for Overmind Studios
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
