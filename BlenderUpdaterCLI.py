@@ -17,7 +17,6 @@
 """
 
 from colorama import init, Fore
-from distutils.dir_util import copy_tree
 from progress.bar import IncrementalBar
 from packaging import version
 import json
@@ -34,7 +33,7 @@ import threading
 import time
 
 
-appversion = "v1.7"
+appversion = "v1.7.1"
 init(autoreset=True)  # enable Colorama autoreset
 failed = False
 url = "https://builder.blender.org/download/daily/"
@@ -98,9 +97,7 @@ parser.add_argument(
 parser.add_argument(
     "-k", "--keep", help="Keep temporary downloaded archive file", action="store_true"
 )
-parser.add_argument(
-    "-t", "--temp", help="Temporary file path", required=False, type=str
-)
+parser.add_argument("-t", "--temp", help="Temporary file path", required=False, type=str)
 parser.add_argument(
     "-b",
     "--blender",
@@ -231,9 +228,7 @@ else:
             req.text,
         )
     except Exception:
-        print(
-            f"{Fore.RED}No valid Blender version specified ({args.blender} not found)"
-        )
+        print(f"{Fore.RED}No valid Blender version specified ({args.blender} not found)")
         sys.exit()
 
     if os.path.isfile("./config.ini"):
@@ -317,7 +312,7 @@ else:
     source = next(os.walk(tempDir))[1]
     spinnerCopy = Spinner("Copying... ")
     spinnerCopy.start()
-    copy_tree(os.path.join(tempDir, source[0]), dir_)
+    shutil.copytree(os.path.join(tempDir, source[0]), dir_, dirs_exist_ok=True)
     spinnerCopy.stop()
     print(f"Copying {Fore.GREEN}done")
 
