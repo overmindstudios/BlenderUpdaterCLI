@@ -239,7 +239,7 @@ else:
             lastversion = ""
 
         try:
-            if lastversion == filename[0]:
+            if lastversion == filename[1]:
                 while True:
                     if args.yes:
                         break
@@ -277,11 +277,11 @@ else:
     os.makedirs(tempDir, exist_ok=True)
     dir_ = os.path.join(args.path, "")
     print(f"{Fore.GREEN}All settings valid, proceeding...")
-    print(f"Downloading {filename[0]}")
+    print(f"Downloading {filename[1]}")
     chunkSize = 10240
     try:
-        r = requests.get(url + filename[0], stream=True)
-        with open(tempDir + filename[0], "wb") as f:
+        r = requests.get(url + filename[1], stream=True)
+        with open(tempDir + filename[1], "wb") as f:
             pbar = IncrementalBar(
                 "Downloading",
                 max=int(r.headers["Content-Length"]) / chunkSize,
@@ -301,7 +301,7 @@ else:
     spinnerExtract = Spinner("Extracting... ")
     spinnerExtract.start()
     try:
-        shutil.unpack_archive(tempDir + filename[0], tempDir)
+        shutil.unpack_archive(tempDir + filename[1], tempDir)
     except Exception:
         print(f"Extraction {Fore.RED}failed, please try again. Exiting.")
         exit()
@@ -336,7 +336,7 @@ else:
 
     # write configuration file
     config.read("config.ini")
-    config.set("main", "version", filename[0])
+    config.set("main", "version", filename[1])
     with open("config.ini", "w") as f:
         config.write(f)
 
