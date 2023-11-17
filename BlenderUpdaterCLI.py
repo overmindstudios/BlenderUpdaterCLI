@@ -215,7 +215,7 @@ if args.yes and args.no:
 # Abort if any error occured during parsing
 if failed is True:
     print(f"{Fore.RED}Input errors detected, aborted (check above for details)")
-    quit()
+    exit()
 else:
     try:
         req = requests.get(url)
