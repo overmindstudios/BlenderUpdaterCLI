@@ -1,19 +1,19 @@
 """
-    Overmind Studios BlenderUpdaterCLI - update Blender to latest buildbot version
-    Copyright (C) 2018-2022 by Tobias Kummer for Overmind Studios
+Overmind Studios BlenderUpdaterCLI - update Blender to latest buildbot version
+Copyright (C) 2018-2022 by Tobias Kummer for Overmind Studios
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from colorama import init, Fore
@@ -110,7 +110,9 @@ parser.add_argument(
 parser.add_argument(
     "-k", "--keep", help="Keep temporary downloaded archive file", action="store_true"
 )
-parser.add_argument("-t", "--temp", help="Temporary file path", required=False, type=str)
+parser.add_argument(
+    "-t", "--temp", help="Temporary file path", required=False, type=str
+)
 parser.add_argument(
     "-b",
     "--blender",
@@ -194,13 +196,15 @@ if args.operatingsystem:
     else:
         print(f"{Fore.RED}Syntax error - use '-o {OS_WINDOWS}' or '-o {OS_LINUX}'")
         failed = True
-else: # Autodetect
+else:  # Autodetect
     current_platform_system = platform.system()
     if current_platform_system in opsys_map:
         opsys, extension = opsys_map[current_platform_system]
         autodetected_os_msg = f"{Fore.CYAN} (autodetected)"
     else:
-        print(f"{Fore.RED}Unsupported operating system auto-detected: {current_platform_system}")
+        print(
+            f"{Fore.RED}Unsupported operating system auto-detected: {current_platform_system}"
+        )
         failed = True
 
 if not failed and opsys:
@@ -251,15 +255,17 @@ else:
     regex_pattern_str = f"blender-{blender}[^\\s]+{opsys}[^\\s]+{extension}"
     try:
         found_files = re.findall(regex_pattern_str, req.text)
-    except Exception as e: # Should be rare if req.text is valid
+    except Exception as e:  # Should be rare if req.text is valid
         print(f"{Fore.RED}Error parsing download page content: {e}")
         sys.exit(1)
 
     if not found_files:
-        print(f"{Fore.RED}No matching Blender build found for version '{args.blender}', OS '{opsys}', extension '{extension}'.")
+        print(
+            f"{Fore.RED}No matching Blender build found for version '{args.blender}', OS '{opsys}', extension '{extension}'."
+        )
         print(f"{Fore.RED}Please check {url} for available builds.")
         sys.exit(1)
-    
+
     target_filename = found_files[0]
 
     if os.path.isfile(CONFIG_FILE_NAME):
@@ -268,24 +274,28 @@ else:
         try:
             lastversion = config.get("main", "version")
         except (configparser.NoSectionError, configparser.NoOptionError):
-            pass # It's okay if the version is not in the config yet
+            pass  # It's okay if the version is not in the config yet
         except configparser.Error as e:
             print(f"{Fore.YELLOW}Warning: Could not read last version from config: {e}")
 
         if lastversion == target_filename:
             if args.no:
-                print("This version is already installed. -n option present, exiting...")
+                print(
+                    "This version is already installed. -n option present, exiting..."
+                )
                 sys.exit(0)
-            if not args.yes: # Prompt only if not -y and not -n
-                while True: # Loop until valid input y/n
-                    anyway = input("This version is already installed. Continue anyways? [Y]es or [N]o: ").lower()
+            if not args.yes:  # Prompt only if not -y and not -n
+                while True:  # Loop until valid input y/n
+                    anyway = input(
+                        "This version is already installed. Continue anyways? [Y]es or [N]o: "
+                    ).lower()
                     if anyway == "n":
                         sys.exit(0)
                     elif anyway == "y":
                         break
                     print("Invalid choice, try again!")
     else:
-        config.read(CONFIG_FILE_NAME) # Read (empty) config
+        config.read(CONFIG_FILE_NAME)  # Read (empty) config
         config.add_section("main")
         with open(CONFIG_FILE_NAME, "w") as f:
             config.write(f)
@@ -337,7 +347,9 @@ else:
     source = next(os.walk(tempDir))[1]
     spinnerCopy = Spinner("Copying... ")
     spinnerCopy.start()
-    shutil.copytree(os.path.join(tempDir, source[0]), destination_path, dirs_exist_ok=True)
+    shutil.copytree(
+        os.path.join(tempDir, source[0]), destination_path, dirs_exist_ok=True
+    )
     spinnerCopy.stop()
     print(f"Copying {Fore.GREEN}done")
 
@@ -358,8 +370,10 @@ else:
     print(f"{Fore.GREEN}All tasks finished")
 
     # write configuration file
-    config.read(CONFIG_FILE_NAME) # Re-read in case of external changes, though unlikely here
-    if not config.has_section("main"): # Ensure section exists
+    config.read(
+        CONFIG_FILE_NAME
+    )  # Re-read in case of external changes, though unlikely here
+    if not config.has_section("main"):  # Ensure section exists
         config.add_section("main")
     config.set("main", "version", target_filename)
     with open(CONFIG_FILE_NAME, "w") as f:
@@ -373,7 +387,7 @@ else:
             executable_path = os.path.join(destination_path, "blender.exe")
         elif opsys == OS_LINUX:
             executable_path = os.path.join(destination_path, "blender")
-        
+
         if executable_path and os.path.isfile(executable_path):
             print(f"{Fore.MAGENTA}Starting up Blender from {executable_path}...")
             try:
