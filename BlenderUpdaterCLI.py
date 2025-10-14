@@ -48,10 +48,7 @@ EXT_TAR_XZ = "tar.xz"
 init(autoreset=True)  # enable Colorama autoreset
 
 
-def spinning_cursor():
-    while True:
-        for cursor in "|/-\\":
-            yield cursor
+
 
 
 def parse_arguments():
@@ -229,33 +226,30 @@ def download_file(url, target_filename, tempDir):
     return download_file_path
 
 def extract_archive(download_file_path, tempDir):
-    spinner = spinning_cursor()
-    print("Extracting... ", end="")
+    print("Extracting...")
     try:
         shutil.unpack_archive(download_file_path, tempDir)
-        print(f"\b{Fore.GREEN}done")
+        print(f"{Fore.GREEN}Extraction done")
     except Exception as e:
-        print(f"\b{Fore.RED}failed: {e}. Exiting.")
+        print(f"{Fore.RED}Extraction failed: {e}. Exiting.")
         return False
     return True
 
 def copy_files(tempDir, destination_path):
-    spinner = spinning_cursor()
-    print("Copying... ", end="")
+    print("Copying...")
     source = next(os.walk(tempDir))[1]
     try:
         shutil.copytree(
             os.path.join(tempDir, source[0]), destination_path, dirs_exist_ok=True
         )
-        print(f"\b{Fore.GREEN}done")
+        print(f"{Fore.GREEN}Copying done")
     except Exception as e:
-        print(f"\b{Fore.RED}failed: {e}. Exiting.")
+        print(f"{Fore.RED}Copying failed: {e}. Exiting.")
         return False
     return True
 
 def cleanup(keep_temp, tempDir):
-    spinner = spinning_cursor()
-    print("Cleanup... ", end="")
+    print("Cleaning up...")
     try:
         if keep_temp:
             # just remove the extracted files
@@ -263,9 +257,9 @@ def cleanup(keep_temp, tempDir):
             shutil.rmtree(os.path.join(tempDir, source[0]))
         else:
             shutil.rmtree(tempDir)
-        print(f"\b{Fore.GREEN}done")
+        print(f"{Fore.GREEN}Cleanup done")
     except Exception as e:
-        print(f"\b{Fore.RED}failed: {e}. Exiting.")
+        print(f"{Fore.RED}Cleanup failed: {e}. Exiting.")
         return False
     return True
 
