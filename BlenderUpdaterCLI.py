@@ -90,156 +90,235 @@ class Spinner:
         time.sleep(self.delay)
 
 
-parser = argparse.ArgumentParser(
-    description="Update Blender to latest nightly build. (c) 2018-2021 by Tobias Kummer/Overmind Studios.",
-    epilog="example usage: BlenderUpdaterCLI -b 2.93.2 -p C:\\Blender",
-)
-parser.add_argument("-p", "--path", help="Destination path", required=True, type=str)
-parser.add_argument(
-    "-o",
-    "--operatingsystem",
-    help="Operating system. 'linux' or 'windows'. If omitted, it will try to autodetect current OS.",
-    type=str,
-)
-parser.add_argument(
-    "-y", "--yes", help="Install even if version already installed", action="store_true"
-)
-parser.add_argument(
-    "-n", "--no", help="Don't install if version already installed", action="store_true"
-)
-parser.add_argument(
-    "-k", "--keep", help="Keep temporary downloaded archive file", action="store_true"
-)
-parser.add_argument(
-    "-t", "--temp", help="Temporary file path", required=False, type=str
-)
-parser.add_argument(
-    "-b",
-    "--blender",
-    help="Desired Blender version - for example '-b 2.93.2'",
-    required=True,
-    type=str,
-)
-parser.add_argument(
-    "-r",
-    "--run",
-    help="Run downloaded Blender version when finished",
-    action="store_true",
-)
-parser.add_argument(
-    "-v",
-    "--version",
-    action="version",
-    version=appversion,
-    help="Print program version",
-)
-args = parser.parse_args()
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Update Blender to latest nightly build. (c) 2018-2021 by Tobias Kummer/Overmind Studios.",
+        epilog="example usage: BlenderUpdaterCLI -b 2.93.2 -p C:\\Blender",
+    )
+    parser.add_argument("-p", "--path", help="Destination path", required=True, type=str)
+    parser.add_argument(
+        "-o",
+        "--operatingsystem",
+        help="Operating system. 'linux' or 'windows'. If omitted, it will try to autodetect current OS.",
+        type=str,
+    )
+    parser.add_argument(
+        "-y", "--yes", help="Install even if version already installed", action="store_true"
+    )
+    parser.add_argument(
+        "-n", "--no", help="Don't install if version already installed", action="store_true"
+    )
+    parser.add_argument(
+        "-k", "--keep", help="Keep temporary downloaded archive file", action="store_true"
+    )
+    parser.add_argument(
+        "-t", "--temp", help="Temporary file path", required=False, type=str
+    )
+    parser.add_argument(
+        "-b",
+        "--blender",
+        help="Desired Blender version - for example '-b 2.93.2'",
+        required=True,
+        type=str,
+    )
+    parser.add_argument(
+        "-r",
+        "--run",
+        help="Run downloaded Blender version when finished",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=appversion,
+        help="Print program version",
+    )
+    return parser.parse_args()
 
+def check_for_app_update():
+    try:
+        appupdate = requests.get(
+            "https://api.github.com/repos/overmindstudios/BlenderUpdaterCLI/releases/latest"
+        ).text
+        UpdateData = json.loads(appupdate)
+        applatestversion = UpdateData["tag_name"]
+        if version.parse(applatestversion) > version.parse(appversion):
+            print(" ERROR ".center(80, "-"))
+            print(f"{Fore.RED}Updated version of BlenderUpdaterCLI found.")
+            print(f"{Fore.RED}The current version might not work properly anymore.")
+            print(
+                f"{Fore.RED}Please visit https://github.com/overmindstudios/BlenderUpdaterCLI/releases"
+            )
+            print(f"{Fore.RED}to download the latest version.")
+            print(f"{Fore.RED}Current: {appversion} - Latest: {applatestversion}")
+            sys.exit(1)
+    except Exception:
+        print(" NOTICE ".center(80, "-"))
+        print("Cannot check for updates.")
+        raise Exception
 
-# Check for updates for BlenderUpdaterCLI
-try:
-    appupdate = requests.get(
-        "https://api.github.com/repos/overmindstudios/BlenderUpdaterCLI/releases/latest"
-    ).text
-    UpdateData = json.loads(appupdate)
-    applatestversion = UpdateData["tag_name"]
-    if version.parse(applatestversion) > version.parse(appversion):
-        print(" ERROR ".center(80, "-"))
-        print(f"{Fore.RED}Updated version of BlenderUpdaterCLI found.")
-        print(f"{Fore.RED}The current version might not work properly anymore.")
-        print(
-            f"{Fore.RED}Please visit https://github.com/overmindstudios/BlenderUpdaterCLI/releases"
-        )
-        print(f"{Fore.RED}to download the latest version.")
-        print(f"{Fore.RED}Current: {appversion} - Latest: {applatestversion}")
-        sys.exit(1)
-except Exception:
-    print(" NOTICE ".center(80, "-"))
-    print("Cannot check for updates.")
-    raise Exception
+def process_settings(args):
+    print(" SETTINGS ".center(80, "-"))
 
+    # check for path validity
+    if not os.path.isdir(args.path):
+        print(Fore.RED + f"'{args.path}' is an invalid path, make sure directory exists")
+        return None
 
-# Start update process
-
-print(" SETTINGS ".center(80, "-"))
-
-# check for path validity
-if os.path.isdir(args.path):
     destination_path = args.path
-    print(f"Destination path: {Fore.GREEN}{args.path}")
-else:
-    print(Fore.RED + f"'{args.path}' is an invalid path, make sure directory exists")
-    failed = True
+    print(f"Destination path: {Fore.GREEN}{destination_path}")
 
-if args.temp:
-    tempDir = args.temp
-print(f"Temporary path: {Fore.GREEN}{tempDir}")
+    tempDir = args.temp if args.temp else DEFAULT_TEMP_DIR
+    print(f"Temporary path: {Fore.GREEN}{tempDir}")
 
-# check for desired blender version
-blender = args.blender
+    # check for desired blender version
+    blender = args.blender
 
-# check for desired operating system or autodetect when empty
-opsys_map = {
-    "Windows": (OS_WINDOWS, EXT_ZIP),
-    "Linux": (OS_LINUX, EXT_TAR_XZ),
-}
-autodetected_os_msg = ""
-opsys = None
-extension = None
+    # check for desired operating system or autodetect when empty
+    opsys_map = {
+        "Windows": (OS_WINDOWS, EXT_ZIP),
+        "Linux": (OS_LINUX, EXT_TAR_XZ),
+    }
+    autodetected_os_msg = ""
+    opsys = None
+    extension = None
 
-if args.operatingsystem:
-    user_os_key = args.operatingsystem.lower()
-    if user_os_key == OS_WINDOWS:
-        opsys, extension = OS_WINDOWS, EXT_ZIP
-    elif user_os_key == OS_LINUX:
-        opsys, extension = OS_LINUX, EXT_TAR_XZ
-    else:
-        print(f"{Fore.RED}Syntax error - use '-o {OS_WINDOWS}' or '-o {OS_LINUX}'")
-        failed = True
-else:  # Autodetect
-    current_platform_system = platform.system()
-    if current_platform_system in opsys_map:
-        opsys, extension = opsys_map[current_platform_system]
-        autodetected_os_msg = f"{Fore.CYAN} (autodetected)"
-    else:
-        print(
-            f"{Fore.RED}Unsupported operating system auto-detected: {current_platform_system}"
+    if args.operatingsystem:
+        user_os_key = args.operatingsystem.lower()
+        if user_os_key == OS_WINDOWS:
+            opsys, extension = OS_WINDOWS, EXT_ZIP
+        elif user_os_key == OS_LINUX:
+            opsys, extension = OS_LINUX, EXT_TAR_XZ
+        else:
+            print(f"{Fore.RED}Syntax error - use '-o {OS_WINDOWS}' or '-o {OS_LINUX}'")
+            return None
+    else:  # Autodetect
+        current_platform_system = platform.system()
+        if current_platform_system in opsys_map:
+            opsys, extension = opsys_map[current_platform_system]
+            autodetected_os_msg = f"{Fore.CYAN} (autodetected)"
+        else:
+            print(
+                f"{Fore.RED}Unsupported operating system auto-detected: {current_platform_system}"
+            )
+            return None
+
+    if opsys:
+        print(f"Operating system: {Fore.GREEN}{opsys}{autodetected_os_msg}")
+
+    # Only 64bit supported for all OS in experimental builds
+    arch = "64"
+
+    # check for --keep flag
+    keep_temp = args.keep
+    print(
+        f"{Fore.MAGENTA}Will keep temporary archive file"
+        if keep_temp
+        else f"{Fore.MAGENTA}Will NOT keep temporary archive file"
+    )
+
+    # check for --run flag
+    will_run = args.run
+    print(f"{Fore.MAGENTA}Will run Blender when finished" if will_run else f"{Fore.MAGENTA}Will NOT run Blender when finished")
+
+    print("-".center(80, "-"))
+
+    if args.yes and args.no:
+        print("You cannot pass both -y and -n flags at the same time!")
+        return None
+
+    return {
+        "destination_path": destination_path,
+        "tempDir": tempDir,
+        "blender": blender,
+        "opsys": opsys,
+        "extension": extension,
+        "keep_temp": keep_temp,
+        "will_run": will_run,
+    }
+
+def download_file(url, target_filename, tempDir):
+    print(f"Downloading {target_filename}")
+    chunkSize = 10240
+    download_file_path = os.path.join(tempDir, target_filename)
+    try:
+        r = requests.get(url + target_filename, stream=True)
+        r.raise_for_status()
+        with open(download_file_path, "wb") as f:
+            pbar = IncrementalBar(
+                "Downloading",
+                max=int(r.headers["Content-Length"]) / chunkSize,
+                suffix="%(percent)d%%",
+            )
+            for chunk in r.iter_content(chunk_size=chunkSize):
+                if chunk:  # filter out keep-alive new chunks
+                    pbar.next()
+                    f.write(chunk)
+            pbar.finish()
+    except requests.exceptions.RequestException as e:
+        print(f"Download {Fore.RED}failed: {e}. Exiting.")
+        return None
+    except IOError as e:
+        print(f"Download {Fore.RED}failed (file error): {e}. Exiting.")
+        return None
+    print(f"Download {Fore.GREEN}done")
+    return download_file_path
+
+def extract_archive(download_file_path, tempDir):
+    spinnerExtract = Spinner("Extracting... ")
+    spinnerExtract.start()
+    try:
+        shutil.unpack_archive(download_file_path, tempDir)
+    except Exception as e:
+        spinnerExtract.stop()
+        print(f"Extraction {Fore.RED}failed: {e}. Exiting.")
+        return False
+    spinnerExtract.stop()
+    print(f"Extraction {Fore.GREEN}done")
+    return True
+
+def copy_files(tempDir, destination_path):
+    source = next(os.walk(tempDir))[1]
+    spinnerCopy = Spinner("Copying... ")
+    spinnerCopy.start()
+    try:
+        shutil.copytree(
+            os.path.join(tempDir, source[0]), destination_path, dirs_exist_ok=True
         )
-        failed = True
+    except Exception as e:
+        spinnerCopy.stop()
+        print(f"Copying {Fore.RED}failed: {e}. Exiting.")
+        return False
+    spinnerCopy.stop()
+    print(f"Copying {Fore.GREEN}done")
+    return True
 
-if not failed and opsys:
-    print(f"Operating system: {Fore.GREEN}{opsys}{autodetected_os_msg}")
+def cleanup(keep_temp, tempDir):
+    spinnerCleanup = Spinner("Cleanup... ")
+    spinnerCleanup.start()
+    try:
+        if keep_temp:
+            # just remove the extracted files
+            source = next(os.walk(tempDir))[1]
+            shutil.rmtree(os.path.join(tempDir, source[0]))
+        else:
+            shutil.rmtree(tempDir)
+    except Exception as e:
+        spinnerCleanup.stop()
+        print(f"Cleanup {Fore.RED}failed: {e}. Exiting.")
+        return False
+    spinnerCleanup.stop()
+    print(f"Cleanup {Fore.GREEN}done")
+    return True
 
-# Only 64bit supported for all OS in experimental builds
-arch = "64"
+def main():
+    args = parse_arguments()
+    check_for_app_update()
+    settings = process_settings(args)
+    if not settings:
+        sys.exit(1)
 
-# check for --keep flag
-keep_temp = args.keep
-print(
-    f"{Fore.MAGENTA}Will keep temporary archive file"
-    if keep_temp
-    else f"{Fore.MAGENTA}Will NOT keep temporary archive file"
-)
-
-# check for --run flag
-if args.run:
-    print(f"{Fore.MAGENTA}Will run Blender when finished")
-    will_run = True
-else:
-    print(f"{Fore.MAGENTA}Will NOT run Blender when finished")
-    will_run = False
-
-print("-".center(80, "-"))
-
-if args.yes and args.no:
-    print("You cannot pass both -y and -n flags at the same time!")
-    failed = True
-
-# Abort if any error occured during parsing
-if failed:
-    print(f"{Fore.RED}Input errors detected, aborted (check above for details)")
-    sys.exit(1)
-else:
     try:
         req = requests.get(url)
         req.raise_for_status()  # Raise an exception for HTTP errors
@@ -248,11 +327,11 @@ else:
         sys.exit(1)
 
     # Ensure opsys and extension are valid before using in regex
-    if not opsys or not extension:
+    if not settings["opsys"] or not settings["extension"]:
         print(f"{Fore.RED}Operating system details not determined. Cannot proceed.")
         sys.exit(1)
 
-    regex_pattern_str = f"blender-{blender}[^\\s]+{opsys}[^\\s]+{extension}"
+    regex_pattern_str = f"blender-{settings['blender']}[^\\s]+{settings['opsys']}[^\\s]+{settings['extension']}"
     try:
         found_files = re.findall(regex_pattern_str, req.text)
     except Exception as e:  # Should be rare if req.text is valid
@@ -261,7 +340,7 @@ else:
 
     if not found_files:
         print(
-            f"{Fore.RED}No matching Blender build found for version '{args.blender}', OS '{opsys}', extension '{extension}'."
+            f"{Fore.RED}No matching Blender build found for version '{args.blender}', OS '{settings['opsys']}', extension '{settings['extension']}'."
         )
         print(f"{Fore.RED}Please check {url} for available builds.")
         sys.exit(1)
@@ -300,70 +379,24 @@ else:
         with open(CONFIG_FILE_NAME, "w") as f:
             config.write(f)
 
-    if not keep_temp:
-        if os.path.isdir(tempDir):
-            shutil.rmtree(tempDir)
-    os.makedirs(tempDir, exist_ok=True)
+    if not settings['keep_temp']:
+        if os.path.isdir(settings['tempDir']):
+            shutil.rmtree(settings['tempDir'])
+    os.makedirs(settings['tempDir'], exist_ok=True)
 
     print(f"{Fore.GREEN}All settings valid, proceeding...")
-    print(f"Downloading {target_filename}")
-    chunkSize = 10240
-    download_file_path = os.path.join(tempDir, target_filename)
-    try:
-        r = requests.get(url + target_filename, stream=True)
-        r.raise_for_status()
-        with open(download_file_path, "wb") as f:
-            pbar = IncrementalBar(
-                "Downloading",
-                max=int(r.headers["Content-Length"]) / chunkSize,
-                suffix="%(percent)d%%",
-            )
-            for chunk in r.iter_content(chunk_size=chunkSize):
-                if chunk:  # filter out keep-alive new chunks
-                    pbar.next()
-                    f.write(chunk)
-            pbar.finish()
-    except requests.exceptions.RequestException as e:
-        print(f"Download {Fore.RED}failed: {e}. Exiting.")
+    download_file_path = download_file(url, target_filename, settings['tempDir'])
+    if not download_file_path:
         sys.exit(1)
-    except IOError as e:
-        print(f"Download {Fore.RED}failed (file error): {e}. Exiting.")
+
+    if not extract_archive(download_file_path, settings['tempDir']):
         sys.exit(1)
-    print(f"Download {Fore.GREEN}done")
 
-    # Extraction
-    spinnerExtract = Spinner("Extracting... ")
-    spinnerExtract.start()
-    try:
-        shutil.unpack_archive(download_file_path, tempDir)
-    except Exception as e:
-        spinnerExtract.stop()
-        print(f"Extraction {Fore.RED}failed: {e}. Exiting.")
+    if not copy_files(settings['tempDir'], settings['destination_path']):
         sys.exit(1)
-    spinnerExtract.stop()
-    print(f"Extraction {Fore.GREEN}done")
 
-    # Copying
-    source = next(os.walk(tempDir))[1]
-    spinnerCopy = Spinner("Copying... ")
-    spinnerCopy.start()
-    shutil.copytree(
-        os.path.join(tempDir, source[0]), destination_path, dirs_exist_ok=True
-    )
-    spinnerCopy.stop()
-    print(f"Copying {Fore.GREEN}done")
-
-    # Cleanup
-    spinnerCleanup = Spinner("Cleanup... ")
-    spinnerCleanup.start()
-    if keep_temp:
-        # just remove the extracted files
-        shutil.rmtree(os.path.join(tempDir, source[0]))
-    else:
-        shutil.rmtree(tempDir)
-
-    spinnerCleanup.stop()
-    print(f"Cleanup {Fore.GREEN}done")
+    if not cleanup(settings['keep_temp'], settings['tempDir']):
+        sys.exit(1)
 
     # Finished
     print("-".center(80, "-"))
@@ -383,10 +416,10 @@ else:
     if args.run:
         executable_path = ""
         # Use the 'opsys' determined for download, not the current platform.system()
-        if opsys == OS_WINDOWS:
-            executable_path = os.path.join(destination_path, "blender.exe")
-        elif opsys == OS_LINUX:
-            executable_path = os.path.join(destination_path, "blender")
+        if settings['opsys'] == OS_WINDOWS:
+            executable_path = os.path.join(settings['destination_path'], "blender.exe")
+        elif settings['opsys'] == OS_LINUX:
+            executable_path = os.path.join(settings['destination_path'], "blender")
 
         if executable_path and os.path.isfile(executable_path):
             print(f"{Fore.MAGENTA}Starting up Blender from {executable_path}...")
@@ -397,4 +430,4 @@ else:
         elif executable_path:
             print(f"{Fore.RED}Blender executable not found at {executable_path}")
         else:
-            print(f"{Fore.RED}Cannot determine Blender executable for OS '{opsys}'")
+            print(f"{Fore.RED}Cannot determine Blender executable for OS '{settings['opsys']}'")
