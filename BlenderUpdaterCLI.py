@@ -49,7 +49,6 @@ EXT_TAR_XZ = "tar.xz"
 init(autoreset=True)  # enable Colorama autoreset
 failed = False
 config = configparser.ConfigParser()
-tempDir = DEFAULT_TEMP_DIR
 
 
 class Spinner:
@@ -244,7 +243,7 @@ def download_file(url, target_filename, tempDir):
     download_file_path = os.path.join(tempDir, target_filename)
     try:
         r = requests.get(url + target_filename, stream=True)
-        r.raise_for_status()
+        r.raise_for_status()  # Raise an exception for HTTP errors
         with open(download_file_path, "wb") as f:
             pbar = IncrementalBar(
                 "Downloading",
@@ -331,7 +330,7 @@ def main():
         print(f"{Fore.RED}Operating system details not determined. Cannot proceed.")
         sys.exit(1)
 
-    regex_pattern_str = f"blender-{settings['blender']}[^\\s]+{settings['opsys']}[^\\s]+{settings['extension']}"
+    regex_pattern_str = fr"blender-{settings['blender']}[^\s]+{settings['opsys']}[^\s]+{settings['extension']}"
     try:
         found_files = re.findall(regex_pattern_str, req.text)
     except Exception as e:  # Should be rare if req.text is valid
@@ -413,7 +412,7 @@ def main():
         config.write(f)
 
     # run Blender if -r flag present
-    if args.run:
+    if settings['will_run']:
         executable_path = ""
         # Use the 'opsys' determined for download, not the current platform.system()
         if settings['opsys'] == OS_WINDOWS:
@@ -431,3 +430,6 @@ def main():
             print(f"{Fore.RED}Blender executable not found at {executable_path}")
         else:
             print(f"{Fore.RED}Cannot determine Blender executable for OS '{settings['opsys']}'")
+
+if __name__ == "__main__":
+    main()
