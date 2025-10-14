@@ -29,7 +29,6 @@ import requests
 import shutil
 import subprocess
 import sys
-import threading
 import time
 
 
@@ -47,46 +46,12 @@ EXT_ZIP = "zip"
 EXT_TAR_XZ = "tar.xz"
 
 init(autoreset=True)  # enable Colorama autoreset
-failed = False
-config = configparser.ConfigParser()
 
 
-class Spinner:
-    busy = False
-    delay = 0.1
-
-    @staticmethod
-    def spinning_cursor():
-        while True:
-            for cursor in "|/-\\":
-                yield cursor
-
-    def __init__(self, title, delay=None):
-        self.spinner_generator = self.spinning_cursor()
-        if delay is not None:
-            try:
-                parsed_delay = float(delay)
-                if parsed_delay > 0:
-                    self.delay = parsed_delay
-            except ValueError:
-                pass  # Use default delay if parsing fails
-        self.title = title
-
-    def spinner_task(self):
-        while self.busy:
-            sys.stdout.write(self.title + next(self.spinner_generator))
-            sys.stdout.flush()
-            time.sleep(self.delay)
-            sys.stdout.write("\b" * (len(self.title) + 1))
-            sys.stdout.flush()
-
-    def start(self):
-        self.busy = True
-        threading.Thread(target=self.spinner_task).start()
-
-    def stop(self):
-        self.busy = False
-        time.sleep(self.delay)
+def spinning_cursor():
+    while True:
+        for cursor in "|/-\\":
+            yield cursor
 
 
 def parse_arguments():
@@ -137,9 +102,9 @@ def parse_arguments():
 
 def check_for_app_update():
     try:
-        appupdate = requests.get(
-            "https://api.github.com/repos/overmindstudios/BlenderUpdaterCLI/releases/latest"
-        ).text
+        response = requests.get(updateurl)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        appupdate = response.text
         UpdateData = json.loads(appupdate)
         applatestversion = UpdateData["tag_name"]
         if version.parse(applatestversion) > version.parse(appversion):
@@ -152,10 +117,9 @@ def check_for_app_update():
             print(f"{Fore.RED}to download the latest version.")
             print(f"{Fore.RED}Current: {appversion} - Latest: {applatestversion}")
             sys.exit(1)
-    except Exception:
+    except (requests.exceptions.RequestException, json.JSONDecodeError) as e:
         print(" NOTICE ".center(80, "-"))
-        print("Cannot check for updates.")
-        raise Exception
+        print(f"Cannot check for updates: {e}")
 
 def process_settings(args):
     print(" SETTINGS ".center(80, "-"))
@@ -221,7 +185,7 @@ def process_settings(args):
     will_run = args.run
     print(f"{Fore.MAGENTA}Will run Blender when finished" if will_run else f"{Fore.MAGENTA}Will NOT run Blender when finished")
 
-    print("-".center(80, "-"))
+    print("- ".center(80, "-"))
 
     if args.yes and args.no:
         print("You cannot pass both -y and -n flags at the same time!")
@@ -265,37 +229,33 @@ def download_file(url, target_filename, tempDir):
     return download_file_path
 
 def extract_archive(download_file_path, tempDir):
-    spinnerExtract = Spinner("Extracting... ")
-    spinnerExtract.start()
+    spinner = spinning_cursor()
+    print("Extracting... ", end="")
     try:
         shutil.unpack_archive(download_file_path, tempDir)
+        print(f"\b{Fore.GREEN}done")
     except Exception as e:
-        spinnerExtract.stop()
-        print(f"Extraction {Fore.RED}failed: {e}. Exiting.")
+        print(f"\b{Fore.RED}failed: {e}. Exiting.")
         return False
-    spinnerExtract.stop()
-    print(f"Extraction {Fore.GREEN}done")
     return True
 
 def copy_files(tempDir, destination_path):
+    spinner = spinning_cursor()
+    print("Copying... ", end="")
     source = next(os.walk(tempDir))[1]
-    spinnerCopy = Spinner("Copying... ")
-    spinnerCopy.start()
     try:
         shutil.copytree(
             os.path.join(tempDir, source[0]), destination_path, dirs_exist_ok=True
         )
+        print(f"\b{Fore.GREEN}done")
     except Exception as e:
-        spinnerCopy.stop()
-        print(f"Copying {Fore.RED}failed: {e}. Exiting.")
+        print(f"\b{Fore.RED}failed: {e}. Exiting.")
         return False
-    spinnerCopy.stop()
-    print(f"Copying {Fore.GREEN}done")
     return True
 
 def cleanup(keep_temp, tempDir):
-    spinnerCleanup = Spinner("Cleanup... ")
-    spinnerCleanup.start()
+    spinner = spinning_cursor()
+    print("Cleanup... ", end="")
     try:
         if keep_temp:
             # just remove the extracted files
@@ -303,16 +263,73 @@ def cleanup(keep_temp, tempDir):
             shutil.rmtree(os.path.join(tempDir, source[0]))
         else:
             shutil.rmtree(tempDir)
+        print(f"\b{Fore.GREEN}done")
     except Exception as e:
-        spinnerCleanup.stop()
-        print(f"Cleanup {Fore.RED}failed: {e}. Exiting.")
+        print(f"\b{Fore.RED}failed: {e}. Exiting.")
         return False
-    spinnerCleanup.stop()
-    print(f"Cleanup {Fore.GREEN}done")
     return True
+
+def handle_config(config, target_filename, args):
+    if os.path.isfile(CONFIG_FILE_NAME):
+        config.read(CONFIG_FILE_NAME)
+        lastversion = ""
+        try:
+            lastversion = config.get("main", "version")
+        except (configparser.NoSectionError, configparser.NoOptionError):
+            pass  # It's okay if the version is not in the config yet
+        except configparser.Error as e:
+            print(f"{Fore.YELLOW}Warning: Could not read last version from config: {e}")
+
+        if lastversion == target_filename:
+            if args.no:
+                print(
+                    "This version is already installed. -n option present, exiting..."
+                )
+                sys.exit(0)
+            if not args.yes:  # Prompt only if not -y and not -n
+                while True:  # Loop until valid input y/n
+                    anyway = input(
+                        "This version is already installed. Continue anyways? [Y]es or [N]o: "
+                    ).lower()
+                    if anyway == "n":
+                        sys.exit(0)
+                    elif anyway == "y":
+                        break
+                    print("Invalid choice, try again!")
+    else:
+        config.add_section("main")
+        with open(CONFIG_FILE_NAME, "w") as f:
+            config.write(f)
+
+def update_config(config, target_filename):
+    if not config.has_section("main"):  # Ensure section exists
+        config.add_section("main")
+    config.set("main", "version", target_filename)
+    with open(CONFIG_FILE_NAME, "w") as f:
+        config.write(f)
+
+def run_blender(settings):
+    executable_path = ""
+    # Use the 'opsys' determined for download, not the current platform.system()
+    if settings['opsys'] == OS_WINDOWS:
+        executable_path = os.path.join(settings['destination_path'], "blender.exe")
+    elif settings['opsys'] == OS_LINUX:
+        executable_path = os.path.join(settings['destination_path'], "blender")
+
+    if executable_path and os.path.isfile(executable_path):
+        print(f"{Fore.MAGENTA}Starting up Blender from {executable_path}...")
+        try:
+            subprocess.Popen([executable_path])
+        except OSError as e:
+            print(f"{Fore.RED}Failed to start Blender: {e}")
+    elif executable_path:
+        print(f"{Fore.RED}Blender executable not found at {executable_path}")
+    else:
+        print(f"{Fore.RED}Cannot determine Blender executable for OS '{settings['opsys']}'")
 
 def main():
     args = parse_arguments()
+    config = configparser.ConfigParser()
     check_for_app_update()
     settings = process_settings(args)
     if not settings:
@@ -346,37 +363,7 @@ def main():
 
     target_filename = found_files[0]
 
-    if os.path.isfile(CONFIG_FILE_NAME):
-        config.read(CONFIG_FILE_NAME)
-        lastversion = ""
-        try:
-            lastversion = config.get("main", "version")
-        except (configparser.NoSectionError, configparser.NoOptionError):
-            pass  # It's okay if the version is not in the config yet
-        except configparser.Error as e:
-            print(f"{Fore.YELLOW}Warning: Could not read last version from config: {e}")
-
-        if lastversion == target_filename:
-            if args.no:
-                print(
-                    "This version is already installed. -n option present, exiting..."
-                )
-                sys.exit(0)
-            if not args.yes:  # Prompt only if not -y and not -n
-                while True:  # Loop until valid input y/n
-                    anyway = input(
-                        "This version is already installed. Continue anyways? [Y]es or [N]o: "
-                    ).lower()
-                    if anyway == "n":
-                        sys.exit(0)
-                    elif anyway == "y":
-                        break
-                    print("Invalid choice, try again!")
-    else:
-        config.read(CONFIG_FILE_NAME)  # Read (empty) config
-        config.add_section("main")
-        with open(CONFIG_FILE_NAME, "w") as f:
-            config.write(f)
+    handle_config(config, target_filename, args)
 
     if not settings['keep_temp']:
         if os.path.isdir(settings['tempDir']):
@@ -398,38 +385,15 @@ def main():
         sys.exit(1)
 
     # Finished
-    print("-".center(80, "-"))
+    print("- ".center(80, "-"))
     print(f"{Fore.GREEN}All tasks finished")
 
     # write configuration file
-    config.read(
-        CONFIG_FILE_NAME
-    )  # Re-read in case of external changes, though unlikely here
-    if not config.has_section("main"):  # Ensure section exists
-        config.add_section("main")
-    config.set("main", "version", target_filename)
-    with open(CONFIG_FILE_NAME, "w") as f:
-        config.write(f)
+    update_config(config, target_filename)
 
     # run Blender if -r flag present
     if settings['will_run']:
-        executable_path = ""
-        # Use the 'opsys' determined for download, not the current platform.system()
-        if settings['opsys'] == OS_WINDOWS:
-            executable_path = os.path.join(settings['destination_path'], "blender.exe")
-        elif settings['opsys'] == OS_LINUX:
-            executable_path = os.path.join(settings['destination_path'], "blender")
-
-        if executable_path and os.path.isfile(executable_path):
-            print(f"{Fore.MAGENTA}Starting up Blender from {executable_path}...")
-            try:
-                subprocess.Popen([executable_path])
-            except OSError as e:
-                print(f"{Fore.RED}Failed to start Blender: {e}")
-        elif executable_path:
-            print(f"{Fore.RED}Blender executable not found at {executable_path}")
-        else:
-            print(f"{Fore.RED}Cannot determine Blender executable for OS '{settings['opsys']}'")
+        run_blender(settings)
 
 if __name__ == "__main__":
     main()
