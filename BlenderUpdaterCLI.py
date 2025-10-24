@@ -16,20 +16,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from colorama import init, Fore
-from progress.bar import IncrementalBar
-from packaging import version
-import json
 import argparse
 import configparser
+import json
 import os
 import platform
 import re
-import requests
 import shutil
 import subprocess
 import sys
 
+import requests
+from colorama import Fore, init
+from packaging import version
+from progress.bar import IncrementalBar
 
 appversion = "v1.7.1"
 url = "https://builder.blender.org/download/daily/"
