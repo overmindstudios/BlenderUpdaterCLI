@@ -29,7 +29,6 @@ import requests
 import shutil
 import subprocess
 import sys
-import time
 
 
 appversion = "v1.7.1"
@@ -48,15 +47,14 @@ EXT_TAR_XZ = "tar.xz"
 init(autoreset=True)  # enable Colorama autoreset
 
 
-
-
-
 def parse_arguments():
     parser = argparse.ArgumentParser(
         description="Update Blender to latest nightly build. (c) 2018-2021 by Tobias Kummer/Overmind Studios.",
         epilog="example usage: BlenderUpdaterCLI -b 2.93.2 -p C:\\Blender",
     )
-    parser.add_argument("-p", "--path", help="Destination path", required=True, type=str)
+    parser.add_argument(
+        "-p", "--path", help="Destination path", required=True, type=str
+    )
     parser.add_argument(
         "-o",
         "--operatingsystem",
@@ -64,13 +62,22 @@ def parse_arguments():
         type=str,
     )
     parser.add_argument(
-        "-y", "--yes", help="Install even if version already installed", action="store_true"
+        "-y",
+        "--yes",
+        help="Install even if version already installed",
+        action="store_true",
     )
     parser.add_argument(
-        "-n", "--no", help="Don't install if version already installed", action="store_true"
+        "-n",
+        "--no",
+        help="Don't install if version already installed",
+        action="store_true",
     )
     parser.add_argument(
-        "-k", "--keep", help="Keep temporary downloaded archive file", action="store_true"
+        "-k",
+        "--keep",
+        help="Keep temporary downloaded archive file",
+        action="store_true",
     )
     parser.add_argument(
         "-t", "--temp", help="Temporary file path", required=False, type=str
@@ -97,6 +104,7 @@ def parse_arguments():
     )
     return parser.parse_args()
 
+
 def check_for_app_update():
     try:
         response = requests.get(updateurl)
@@ -118,12 +126,15 @@ def check_for_app_update():
         print(" NOTICE ".center(80, "-"))
         print(f"Cannot check for updates: {e}")
 
+
 def process_settings(args):
     print(" SETTINGS ".center(80, "-"))
 
     # check for path validity
     if not os.path.isdir(args.path):
-        print(Fore.RED + f"'{args.path}' is an invalid path, make sure directory exists")
+        print(
+            Fore.RED + f"'{args.path}' is an invalid path, make sure directory exists"
+        )
         return None
 
     destination_path = args.path
@@ -167,9 +178,6 @@ def process_settings(args):
     if opsys:
         print(f"Operating system: {Fore.GREEN}{opsys}{autodetected_os_msg}")
 
-    # Only 64bit supported for all OS in experimental builds
-    arch = "64"
-
     # check for --keep flag
     keep_temp = args.keep
     print(
@@ -180,7 +188,11 @@ def process_settings(args):
 
     # check for --run flag
     will_run = args.run
-    print(f"{Fore.MAGENTA}Will run Blender when finished" if will_run else f"{Fore.MAGENTA}Will NOT run Blender when finished")
+    print(
+        f"{Fore.MAGENTA}Will run Blender when finished"
+        if will_run
+        else f"{Fore.MAGENTA}Will NOT run Blender when finished"
+    )
 
     print("- ".center(80, "-"))
 
@@ -197,6 +209,7 @@ def process_settings(args):
         "keep_temp": keep_temp,
         "will_run": will_run,
     }
+
 
 def download_file(url, target_filename, tempDir):
     print(f"Downloading {target_filename}")
@@ -225,6 +238,7 @@ def download_file(url, target_filename, tempDir):
     print(f"Download {Fore.GREEN}done")
     return download_file_path
 
+
 def extract_archive(download_file_path, tempDir):
     print("Extracting...")
     try:
@@ -234,6 +248,7 @@ def extract_archive(download_file_path, tempDir):
         print(f"{Fore.RED}Extraction failed: {e}. Exiting.")
         return False
     return True
+
 
 def copy_files(tempDir, destination_path):
     print("Copying...")
@@ -247,6 +262,7 @@ def copy_files(tempDir, destination_path):
         print(f"{Fore.RED}Copying failed: {e}. Exiting.")
         return False
     return True
+
 
 def cleanup(keep_temp, tempDir):
     print("Cleaning up...")
@@ -262,6 +278,7 @@ def cleanup(keep_temp, tempDir):
         print(f"{Fore.RED}Cleanup failed: {e}. Exiting.")
         return False
     return True
+
 
 def handle_config(config, target_filename, args):
     if os.path.isfile(CONFIG_FILE_NAME):
@@ -295,6 +312,7 @@ def handle_config(config, target_filename, args):
         with open(CONFIG_FILE_NAME, "w") as f:
             config.write(f)
 
+
 def update_config(config, target_filename):
     if not config.has_section("main"):  # Ensure section exists
         config.add_section("main")
@@ -302,13 +320,14 @@ def update_config(config, target_filename):
     with open(CONFIG_FILE_NAME, "w") as f:
         config.write(f)
 
+
 def run_blender(settings):
     executable_path = ""
     # Use the 'opsys' determined for download, not the current platform.system()
-    if settings['opsys'] == OS_WINDOWS:
-        executable_path = os.path.join(settings['destination_path'], "blender.exe")
-    elif settings['opsys'] == OS_LINUX:
-        executable_path = os.path.join(settings['destination_path'], "blender")
+    if settings["opsys"] == OS_WINDOWS:
+        executable_path = os.path.join(settings["destination_path"], "blender.exe")
+    elif settings["opsys"] == OS_LINUX:
+        executable_path = os.path.join(settings["destination_path"], "blender")
 
     if executable_path and os.path.isfile(executable_path):
         print(f"{Fore.MAGENTA}Starting up Blender from {executable_path}...")
@@ -319,7 +338,10 @@ def run_blender(settings):
     elif executable_path:
         print(f"{Fore.RED}Blender executable not found at {executable_path}")
     else:
-        print(f"{Fore.RED}Cannot determine Blender executable for OS '{settings['opsys']}'")
+        print(
+            f"{Fore.RED}Cannot determine Blender executable for OS '{settings['opsys']}'"
+        )
+
 
 def main():
     args = parse_arguments()
@@ -341,7 +363,7 @@ def main():
         print(f"{Fore.RED}Operating system details not determined. Cannot proceed.")
         sys.exit(1)
 
-    regex_pattern_str = fr"blender-{settings['blender']}[^\s]+{settings['opsys']}[^\s]+{settings['extension']}"
+    regex_pattern_str = rf"blender-{settings['blender']}[^\s]+{settings['opsys']}[^\s]+{settings['extension']}"
     try:
         found_files = re.findall(regex_pattern_str, req.text)
     except Exception as e:  # Should be rare if req.text is valid
@@ -359,23 +381,23 @@ def main():
 
     handle_config(config, target_filename, args)
 
-    if not settings['keep_temp']:
-        if os.path.isdir(settings['tempDir']):
-            shutil.rmtree(settings['tempDir'])
-    os.makedirs(settings['tempDir'], exist_ok=True)
+    if not settings["keep_temp"]:
+        if os.path.isdir(settings["tempDir"]):
+            shutil.rmtree(settings["tempDir"])
+    os.makedirs(settings["tempDir"], exist_ok=True)
 
     print(f"{Fore.GREEN}All settings valid, proceeding...")
-    download_file_path = download_file(url, target_filename, settings['tempDir'])
+    download_file_path = download_file(url, target_filename, settings["tempDir"])
     if not download_file_path:
         sys.exit(1)
 
-    if not extract_archive(download_file_path, settings['tempDir']):
+    if not extract_archive(download_file_path, settings["tempDir"]):
         sys.exit(1)
 
-    if not copy_files(settings['tempDir'], settings['destination_path']):
+    if not copy_files(settings["tempDir"], settings["destination_path"]):
         sys.exit(1)
 
-    if not cleanup(settings['keep_temp'], settings['tempDir']):
+    if not cleanup(settings["keep_temp"], settings["tempDir"]):
         sys.exit(1)
 
     # Finished
@@ -386,8 +408,9 @@ def main():
     update_config(config, target_filename)
 
     # run Blender if -r flag present
-    if settings['will_run']:
+    if settings["will_run"]:
         run_blender(settings)
+
 
 if __name__ == "__main__":
     main()
