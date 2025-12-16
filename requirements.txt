@@ -5,6 +5,6 @@ idna==3.10
 packaging==25.0
 progress==1.6
 requests==2.32.4
-urllib3==2.4.0
+urllib3==2.5.0
 pytest
 pytest-mock
