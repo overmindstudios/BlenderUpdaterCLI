@@ -4,7 +4,7 @@ colorama==0.4.6
 idna==3.10
 packaging==25.0
 progress==1.6
-requests==2.32.4
+requests==2.33.0
 urllib3==2.6.3
 pytest
 pytest-mock
